@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Домбай — гид по курорту</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#4DC8E8;--sky2:#2AAFD0;--sky3:#1890B0;--night:#071520;--red:#D42B2B;--text:#0D1F2A;--muted:#607080;--bg:#EEF6FA;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+.hero{position:relative;overflow:hidden;padding:0;background:linear-gradient(175deg,#071E34 0%,#0D3050 35%,#134870 60%,#1A6898 80%,#2AAFD0 100%);}
+.hero-stars{position:absolute;top:0;left:0;right:0;height:70%;background-image:radial-gradient(1px 1px at 12% 15%,rgba(255,255,255,.95) 0%,transparent 100%),radial-gradient(1px 1px at 32% 7%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 52% 12%,rgba(255,255,255,.85) 0%,transparent 100%),radial-gradient(1px 1px at 70% 4%,rgba(255,255,255,.6) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 85% 16%,rgba(255,255,255,.9) 0%,transparent 100%),radial-gradient(1px 1px at 22% 28%,rgba(255,255,255,.5) 0%,transparent 100%),radial-gradient(1px 1px at 58% 22%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 6% 38%,rgba(255,255,255,.6) 0%,transparent 100%),radial-gradient(1px 1px at 93% 8%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 38% 18%,rgba(255,255,255,.45) 0%,transparent 100%);}
+.hero-content{position:relative;z-index:10;padding:28px 20px 26px;}
+
+/* ДОМБАЙ — фиксированный большой размер */
+.hero-title{
+  font-family:'Montserrat',sans-serif;
+  font-size:64px;
+  font-weight:900;
+  color:#fff;
+  line-height:.92;
+  letter-spacing:-2px;
+  margin-bottom:0;
+  text-shadow:0 2px 24px rgba(0,0,0,.35);
+  white-space:nowrap;
+}
+
+/* Гид по курорту — растягивается на ширину слова ДОМБАЙ через letter-spacing */
+.hero-subtitle{
+  font-family:'Montserrat',sans-serif;
+  font-size:13.5px;
+  font-weight:700;
+  color:rgba(255,255,255,.52);
+  letter-spacing:.72em;
+  text-transform:uppercase;
+  margin-top:6px;
+  margin-bottom:22px;
+  margin-left:2px;
+}
+
+/* Телефон под пилюлями */
+.hero-phone{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:12px;
+}
+.hero-phone a{
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  color:rgba(255,255,255,.5);
+  text-decoration:none;
+}
+.hero-phone a span.ph-num{
+  color:rgba(255,255,255,.85);
+  font-weight:700;
+  font-size:13px;
+}
+
+.status-bar{display:flex;gap:7px;flex-wrap:wrap;}
+.status-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:600;color:#fff;cursor:pointer;text-decoration:none;}
+.status-pill:active{background:rgba(255,255,255,.2);}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.dg{background:#30E080;box-shadow:0 0 6px #30E080;}.ds{background:var(--sky);}.dw{background:rgba(255,255,255,.7);}
+
+
+
+.sec-h{padding:16px 14px 9px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 14px;}
+.mc{border-radius:18px;padding:16px 14px 14px;display:flex;flex-direction:column;gap:5px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s;animation:fadeUp .45s ease both;}
+.mc:active{transform:scale(.96);}
+.mc::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.04);}
+.mc::after{content:'';position:absolute;bottom:-20px;left:-20px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.03);}
+.c1{background:linear-gradient(145deg,#0C2235,#163858);}
+.c2{background:linear-gradient(145deg,#0A2218,#154830);}
+.c3{background:linear-gradient(145deg,#0A2030,#1A5070);}
+.c4{background:linear-gradient(145deg,#2A0A0A,#6A1818);}
+.c5{background:linear-gradient(145deg,#102030,#204860);}
+.c6{background:linear-gradient(145deg,#0D1E38,#1A3A78);}
+.c7{background:linear-gradient(145deg,#1A1508,#483A14);}
+.c8{background:linear-gradient(145deg,#0A1830,#162A58);}
+.c9{background:linear-gradient(145deg,#1A0A28,#3A1858);}
+.c10{background:linear-gradient(145deg,#0A1A20,#184838);}
+.c11{background:linear-gradient(145deg,#201208,#582C10);}
+.c12{background:linear-gradient(145deg,#0A1A30,#1A3A60);}
+.mc:nth-child(1){animation-delay:.04s;}.mc:nth-child(2){animation-delay:.08s;}.mc:nth-child(3){animation-delay:.12s;}.mc:nth-child(4){animation-delay:.16s;}.mc:nth-child(5){animation-delay:.20s;}.mc:nth-child(6){animation-delay:.24s;}.mc:nth-child(7){animation-delay:.28s;}.mc:nth-child(8){animation-delay:.32s;}.mc:nth-child(9){animation-delay:.36s;}.mc:nth-child(10){animation-delay:.40s;}.mc:nth-child(11){animation-delay:.44s;}.mc:nth-child(12){animation-delay:.48s;}
+.ci{font-size:24px;line-height:1;margin-bottom:2px;position:relative;z-index:1;}
+.cn{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:#fff;line-height:1.25;position:relative;z-index:1;}
+.cd{font-size:11px;color:rgba(255,255,255,.5);line-height:1.35;position:relative;z-index:1;}
+.ct{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);margin-top:3px;align-self:flex-start;position:relative;z-index:1;}
+
+.tours-block{margin:4px 14px 0;}
+.tc{border-radius:16px;padding:15px 16px;margin-bottom:9px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:transform .15s;}
+.tc:active{transform:scale(.97);}
+.tw{background:linear-gradient(135deg,#0D2540,#1A4A80);}
+.ts{background:linear-gradient(135deg,#0D2A18,#1A5530);}
+
+/* Иконки туров — не эмодзи, а SVG-значки */
+.tic{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:26px;line-height:1;}
+
+.ti{flex:1;}
+.tl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:2px;}
+.tn{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:3px;}
+.td{font-size:12px;color:rgba(255,255,255,.6);font-weight:500;}
+.ta{font-size:20px;color:rgba(255,255,255,.4);flex-shrink:0;}
+
+.ch-banner{margin:13px 14px 0;background:linear-gradient(135deg,var(--sky3),var(--sky));border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s;}
+.ch-banner:active{transform:scale(.98);}
+.ch-icon{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ch-t{flex:1;}
+.ch-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;}
+.ch-sub{font-size:12px;color:rgba(255,255,255,.7);}
+.ch-arr{font-size:20px;color:rgba(255,255,255,.5);}
+
+/* ФУТЕР */
+.footer{padding:20px 14px 28px;text-align:center;}
+.footer-soc-label{
+  font-family:'Montserrat',sans-serif;
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+}
+.socials{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.soc-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:11px 10px;
+  border-radius:13px;
+  text-decoration:none;
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  color:#fff;
+  background:#229ED9;
+  transition:transform .15s;
+  cursor:pointer;
+}
+.soc-btn:active{transform:scale(.96);}
+.soc-btn svg{width:18px;height:18px;flex-shrink:0;}
+
+.bottom-nav{position:sticky;bottom:0;background:#fff;border-top:1px solid rgba(77,200,232,.12);display:flex;padding:6px 0 14px;box-shadow:0 -4px 24px rgba(13,31,45,.09);z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;}
+.ni:active{opacity:.6;}
+.nico{font-size:20px;}
+.nlbl{font-size:10px;font-weight:600;color:var(--muted);}
+.ni.active .nlbl{color:var(--sky2);}
+
+.page{display:none;}.page.active{display:block;}
+.stub-hero{background:linear-gradient(160deg,#071520,#0D3050 60%,#2AAFD0);padding:28px 20px 24px;position:relative;overflow:hidden;}
+.stub-hero::before{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,var(--bg),transparent);}
+.sbk{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:rgba(255,255,255,.7);cursor:pointer;margin-bottom:16px;border:none;background:none;}
+.sbt{font-family:'Montserrat',sans-serif;font-size:26px;font-weight:900;color:#fff;line-height:1.1;}
+.stub-body{padding:20px 14px;min-height:50vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;}
+.sbi{font-size:52px;}.sbm{font-size:14px;color:var(--muted);line-height:1.6;max-width:280px;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.hero-content{animation:fadeUp .5s ease both;}
+
+</style>
+</head>
+<body>
+
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-stars"></div>
+    <div class="hero-content">
+      <div class="hero-title">ДОМБАЙ</div>
+      <div class="hero-subtitle">Гид по курорту</div>
+      <div class="status-bar">
+        <div class="status-pill"><div class="sdot dg"></div>Курорт открыт</div>
+        <div class="status-pill"><div class="sdot ds"></div>−3° · Снег</div>
+        <a class="status-pill" href="https://dombai-kd.ru/vebkamery/" target="_blank"><div class="sdot dw"></div>📷 Вебкамеры</a>
+      </div>
+      <div class="hero-phone">
+        <a href="tel:+78787958006"><span class="ph-num">+7 (87879) 5-80-06</span> — Горячая линия курорта</a>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="sec-h">Главное меню</div>
+  <div class="menu-grid">
+    <div class="mc c1" onclick="goPage('hotels')">
+      <div class="ci">🏨</div><div class="cn">Отели и жильё</div>
+      <div class="cd">Сравнить цены на нескольких площадках</div>
+      <div class="ct">Яндекс · ТВИЛ · Суточно</div>
+    </div>
+    <div class="mc c2" onclick="goPage('transfer')">
+      <div class="ci">🚐</div><div class="cn">Трансфер</div>
+      <div class="cd">Из Минвод, Ставрополя, Пятигорска</div>
+    </div>
+    <div class="mc c3" onclick="goPage('guide')">
+      <div class="ci">🗺️</div><div class="cn">Гид по Домбаю</div>
+      <div class="cd">Все интересные места</div>
+    </div>
+    <div class="mc c4" onclick="goPage('excursions')">
+      <div class="ci">🧗</div><div class="cn">Экскурсии</div>
+      <div class="cd">Туры с местными гидами</div>
+    </div>
+    <div class="mc c5" onclick="goPage('routes')">
+      <div class="ci">🥾</div><div class="cn">Маршруты</div>
+      <div class="cd">Пешие, джиппинг, альпинизм</div>
+    </div>
+    <div class="mc c6" onclick="goPage('slopes')">
+      <div class="ci">⛷️</div><div class="cn">Трассы и подъёмники</div>
+      <div class="cd">Карта, ски-пассы, прокат</div>
+    </div>
+    <div class="mc c7" onclick="goPage('contacts')">
+      <div class="ci">📞</div><div class="cn">Контакты</div>
+      <div class="cd">Такси, спасатели, инструкторы</div>
+    </div>
+    <div class="mc c8" onclick="goPage('weather')">
+      <div class="ci">🌤️</div><div class="cn">Погода и вебкамеры</div>
+      <div class="cd">Прогноз и трассы сегодня</div>
+    </div>
+    <div class="mc c9" onclick="goPage('about')">
+      <div class="ci">🏔️</div><div class="cn">О Домбае</div>
+      <div class="cd">История, интересные факты</div>
+    </div>
+    <div class="mc c10" onclick="goPage('places')">
+      <div class="ci">🍽️</div><div class="cn">Заведения</div>
+      <div class="cd">Куда сходить и что посмотреть</div>
+    </div>
+    <div class="mc c11" onclick="goPage('news')">
+      <div class="ci">📰</div><div class="cn">Новости Домбая</div>
+      <div class="cd">Последние события на курорте</div>
+    </div>
+    <div class="mc c12" onclick="goPage('advert')">
+      <div class="ci">📣</div><div class="cn">Реклама и сотрудничество</div>
+      <div class="cd">Разместить рекламу или партнёрство</div>
+    </div>
+  </div>
+
+  <div class="sec-h">Туры Brusnika Travel</div>
+  <div class="tours-block">
+    <div class="tc tw" onclick="openTour('winter')">
+      <div class="tic">⛷️</div>
+      <div class="ti">
+        <div class="tl">Зимний тур</div>
+        <div class="tn">Домбай — горнолыжный тур</div>
+        <div class="td">Смотреть программу путешествия</div>
+      </div>
+      <div class="ta">›</div>
+    </div>
+    <div class="tc ts" onclick="openTour('summer')">
+      <div class="tic">🥾</div>
+      <div class="ti">
+        <div class="tl">Летний тур</div>
+        <div class="tn">Домбай — летний тур</div>
+        <div class="td">Смотреть программу путешествия</div>
+      </div>
+      <div class="ta">›</div>
+    </div>
+  </div>
+
+  <div class="ch-banner" onclick="openChannel()">
+    <div class="ch-icon">✈️</div>
+    <div class="ch-t">
+      <div class="ch-title">Telegram-канал про Домбай</div>
+      <div class="ch-sub">Советы, фото, актуальные новости</div>
+    </div>
+    <div class="ch-arr">›</div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-soc-label">Мы в социальных сетях</div>
+    <div class="socials">
+      <!-- ВКонтакте -->
+      <a class="soc-btn" href="https://vk.com/public44935927" target="_blank">ВКонтакте</a>
+      <!-- Telegram -->
+      <a class="soc-btn" href="https://t.me/dombay_arhiz" target="_blank">Telegram</a>
+      <!-- Дзен -->
+      <a class="soc-btn" href="https://dzen.ru/dombay" target="_blank">Дзен</a>
+      <!-- MAX -->
+      <a class="soc-btn" href="https://max.ru/dombay" target="_blank">Макс</a>
+    </div>
+  </div>
+</div>
+
+<!-- STUB PAGES -->
+<div class="page" id="page-hotels"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">🏨 Отели и жильё</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">Поиск и сравнение цен с Яндекс Путешествий, ТВИЛ и Суточно</div></div></div>
+<div class="page" id="page-transfer"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">🚐 Трансфер до Домбая</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">Поиск трансфера через Kiwitaxi из Минвод, Пятигорска, Ставрополя</div></div></div>
+<div class="page" id="page-guide"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">🗺️ Гид по Домбаю</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">Достопримечательности, вершины, озёра, водопады и интересные места</div></div></div>
+<div class="page" id="page-excursions"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">🧗 Экскурсии</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">Туры с местными гидами через Tripster — джиппинг, горные маршруты</div></div></div>
+<div class="page" id="page-routes"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">🥾 Маршруты</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">Пешие треки, водопады, ледники — маршруты для любого уровня</div></div></div>
+<div class="page" id="page-slopes"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">⛷️ Трассы и подъёмники</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">Карта трасс, цены на ски-пассы, официальный прокат снаряжения</div></div></div>
+<div class="page" id="page-contacts"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">📞 Полезные контакты</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">Горячая линия курорта, такси, спасательная служба, инструкторы</div></div></div>
+<div class="page" id="page-weather"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">🌤️ Погода и вебкамеры</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">Прогноз погоды, состояние трасс и прямые трансляции с горы</div></div></div>
+<div class="page" id="page-about"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">🏔️ О Домбае</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">История курорта, интересные факты, высоты и рекорды</div></div></div>
+<div class="page" id="page-places"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">🍽️ Заведения</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">Рестораны, кафе, магазины и другие места куда стоит зайти</div></div></div>
+<div class="page" id="page-news"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">📰 Новости Домбая</div></div><div class="stub-body"><div class="sbi">🏗️</div><div class="sbm">Последние события на курорте — открытие сезона, состояние трасс, мероприятия</div></div></div>
+<div class="page" id="page-advert"><div class="stub-hero"><button class="sbk" onclick="goPage('home')">← Назад</button><div class="sbt">📣 Реклама и сотрудничество</div></div><div class="stub-body"><div class="sbi">🤝</div><div class="sbm">Хотите разместить рекламу или предложить партнёрство? Напишите нам в Telegram.</div></div></div>
+
+<nav class="bottom-nav">
+  <div class="ni active" id="nav-home" onclick="goPage('home')"><span class="nico">🏠</span><span class="nlbl">Главная</span></div>
+  <div class="ni" id="nav-hotels" onclick="goPage('hotels')"><span class="nico">🏨</span><span class="nlbl">Отели</span></div>
+  <div class="ni" id="nav-routes" onclick="goPage('routes')"><span class="nico">🥾</span><span class="nlbl">Маршруты</span></div>
+  <div class="ni" id="nav-contacts" onclick="goPage('contacts')"><span class="nico">📞</span><span class="nlbl">Контакты</span></div>
+</nav>
+
+<script>
+try{const tg=window.Telegram.WebApp;tg.ready();tg.expand();tg.setHeaderColor('#071520');}catch(e){}
+
+
+
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const nav=document.getElementById('nav-'+id);
+  if(nav)nav.classList.add('active');
+  window.scrollTo(0,0);
+  try{
+    if(id!=='home'){
+      window.Telegram.WebApp.BackButton.show();
+      window.Telegram.WebApp.BackButton.onClick(()=>goPage('home'));
+    }else{
+      window.Telegram.WebApp.BackButton.hide();
+    }
+  }catch(e){}
+}
+
+function openChannel(){
+  try{window.Telegram.WebApp.openTelegramLink('https://t.me/dombay_arhiz');}
+  catch(e){window.open('https://t.me/dombay_arhiz','_blank');}
+}
+
+function openTour(type){
+  const u={winter:'https://t.me/dombay_arhiz',summer:'https://t.me/dombay_arhiz'};
+  try{window.Telegram.WebApp.openTelegramLink(u[type]);}
+  catch(e){window.open(u[type],'_blank');}
+}
+</script>
+</body>
+</html>
