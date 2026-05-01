@@ -315,6 +315,7 @@ try{const tg=window.Telegram.WebApp;tg.ready();tg.expand();tg.setHeaderColor('#0
 
 
 function goPage(id){
+  if(id==='hotels'){window.location.href='hotels.html';return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
