@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Отели и жильё — Домбай</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#4DC8E8;--sky2:#2AAFD0;--sky3:#1890B0;--night:#071520;--text:#0D1F2A;--muted:#607080;--bg:#EEF6FA;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.hero{background:linear-gradient(160deg,#071520 0%,#0D3050 60%,#2AAFD0 100%);padding:28px 20px 24px;position:relative;overflow:hidden;}
+.hero-stars{position:absolute;top:0;left:0;right:0;height:100%;background-image:radial-gradient(1px 1px at 15% 20%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 40% 10%,rgba(255,255,255,.6) 0%,transparent 100%),radial-gradient(1px 1px at 70% 15%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 85% 5%,rgba(255,255,255,.5) 0%,transparent 100%);}
+.back-btn{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:rgba(255,255,255,.7);cursor:pointer;margin-bottom:16px;border:none;background:none;padding:0;}
+.hero-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:6px;position:relative;z-index:1;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.55);position:relative;z-index:1;line-height:1.5;}
+
+.search-hint{margin:14px 14px 0;background:#fff;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 16px rgba(13,31,45,.07);}
+.sh-icon{font-size:22px;flex-shrink:0;}
+.sh-text{flex:1;}
+.sh-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.sh-sub{font-size:11px;color:var(--muted);line-height:1.5;}
+
+.sec-h{padding:18px 14px 10px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+
+.platforms{padding:0 14px;display:flex;flex-direction:column;gap:10px;}
+
+.platform-card{border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .15s;text-decoration:none;display:block;}
+.platform-card:active{transform:scale(.98);}
+
+.pc-header{padding:16px 16px 16px;display:flex;align-items:center;gap:14px;}
+.pc-logo{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;font-family:'Montserrat',sans-serif;font-weight:900;}
+.pc-info{flex:1;}
+.pc-name{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;}
+.pc-desc{font-size:12px;color:rgba(255,255,255,.6);line-height:1.45;}
+.pc-arrow{font-size:20px;color:rgba(255,255,255,.4);align-self:center;flex-shrink:0;}
+
+.pc-tag-row{padding:0 16px 14px;display:flex;gap:6px;flex-wrap:wrap;}
+.pc-tag{font-size:10px;font-weight:600;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);}
+.pc-tag.highlight{background:rgba(255,255,255,.22);color:#fff;}
+
+.bg-yandex{background:linear-gradient(145deg,#0C2235,#1A4070);}
+.bg-tvil  {background:linear-gradient(145deg,#0A2218,#1A5038);}
+.bg-sutoch{background:linear-gradient(145deg,#1A0A28,#3A1868);}
+.bg-avito {background:linear-gradient(145deg,#1A1208,#4A3010);}
+
+.tip-block{margin:14px 14px 0;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 16px rgba(13,31,45,.06);}
+.tip-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.tip-item{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px;color:var(--text);line-height:1.45;}
+.tip-item:last-child{border-bottom:none;}
+.tip-dot{width:6px;height:6px;border-radius:50%;background:var(--sky2);flex-shrink:0;margin-top:5px;}
+
+.footer-pad{height:28px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-stars"></div>
+  <button class="back-btn" onclick="goBack()">← Назад</button>
+  <div class="hero-title">🏨 Отели и жильё</div>
+  <div class="hero-sub">Выберите площадку и забронируйте жильё в Домбае.</div>
+</div>
+
+<div class="search-hint">
+  <div class="sh-icon">💡</div>
+  <div class="sh-text">
+    <div class="sh-title">Как выбрать выгоднее</div>
+    <div class="sh-sub">Проверьте 2–3 площадки — цены могут отличаться на 10–15%. Яндекс часто даёт лучшую цену на отели, ТВИЛ — на апартаменты.</div>
+  </div>
+</div>
+
+<div class="sec-h">Площадки для бронирования</div>
+<div class="platforms">
+
+  <a class="platform-card bg-yandex" href="https://travel.yandex.ru/hotels/dombay/?marker=472741&utm_source=miniapp" onclick="openLink(this.href); return false;">
+    <div class="pc-header">
+      <div class="pc-logo" style="background:rgba(255,204,0,.15);color:#FFCC00;">Я</div>
+      <div class="pc-info">
+        <div class="pc-name">Яндекс Путешествия</div>
+        <div class="pc-desc">Крупнейший российский агрегатор. Показывает предложения с нескольких площадок сразу. Оплата картой РФ, кэшбэк Яндекс Плюс.</div>
+      </div>
+      <div class="pc-arrow">›</div>
+    </div>
+    <div class="pc-tag-row">
+      <div class="pc-tag highlight">Рекомендуем</div>
+      <div class="pc-tag">Отели</div>
+      <div class="pc-tag">Апартаменты</div>
+      <div class="pc-tag">Оплата картой РФ</div>
+    </div>
+  </a>
+
+  <a class="platform-card bg-tvil" href="https://tvil.ru/dombay/?marker=472741&utm_source=miniapp" onclick="openLink(this.href); return false;">
+    <div class="pc-header">
+      <div class="pc-logo" style="background:rgba(40,200,100,.15);color:#28C864;font-size:14px;">ТВ</div>
+      <div class="pc-info">
+        <div class="pc-name">ТВИЛ.РУ</div>
+        <div class="pc-desc">Отели, апартаменты, базы отдыха и коттеджи. Большой выбор частного жилья рядом с горой — удобно для семей.</div>
+      </div>
+      <div class="pc-arrow">›</div>
+    </div>
+    <div class="pc-tag-row">
+      <div class="pc-tag">Апартаменты</div>
+      <div class="pc-tag">Базы отдыха</div>
+      <div class="pc-tag">Коттеджи</div>
+    </div>
+  </a>
+
+  <a class="platform-card bg-sutoch" href="https://sutochno.ru/dombay?marker=472741&utm_source=miniapp" onclick="openLink(this.href); return false;">
+    <div class="pc-header">
+      <div class="pc-logo" style="background:rgba(160,100,255,.15);color:#A064FF;font-size:14px;">СУТ</div>
+      <div class="pc-info">
+        <div class="pc-name">Суточно.ру</div>
+        <div class="pc-desc">Квартиры и дома посуточно. Выгодный вариант для компаний и длительного проживания.</div>
+      </div>
+      <div class="pc-arrow">›</div>
+    </div>
+    <div class="pc-tag-row">
+      <div class="pc-tag">Посуточно</div>
+      <div class="pc-tag">Квартиры</div>
+      <div class="pc-tag">Дома</div>
+    </div>
+  </a>
+
+  <a class="platform-card bg-avito" href="https://www.avito.ru/dombay/nedvizhimost/snyat/posutochno?marker=472741&utm_source=miniapp" onclick="openLink(this.href); return false;">
+    <div class="pc-header">
+      <div class="pc-logo" style="background:rgba(255,160,0,.15);color:#FFA000;">А</div>
+      <div class="pc-info">
+        <div class="pc-name">Авито Путешествия</div>
+        <div class="pc-desc">Частное жильё напрямую от хозяев. Часто самые низкие цены — особенно в пиковый сезон.</div>
+      </div>
+      <div class="pc-arrow">›</div>
+    </div>
+    <div class="pc-tag-row">
+      <div class="pc-tag">От хозяев</div>
+      <div class="pc-tag">Низкие цены</div>
+    </div>
+  </a>
+
+</div>
+
+<div class="tip-block">
+  <div class="tip-title">Советы по бронированию</div>
+  <div class="tip-item"><div class="tip-dot"></div>Бронируйте за 2–3 недели — цены ниже, выбор шире</div>
+  <div class="tip-item"><div class="tip-dot"></div>Зимний сезон: декабрь–март — самые высокие цены</div>
+  <div class="tip-item"><div class="tip-dot"></div>Лучшее расположение — посёлок Домбай, рядом с подъёмниками</div>
+  <div class="tip-item"><div class="tip-dot"></div>Уточняйте наличие парковки — в сезон с ней бывают проблемы</div>
+</div>
+
+<div class="footer-pad"></div>
+
+<script>
+try{const tg=window.Telegram.WebApp;tg.ready();tg.expand();tg.setHeaderColor('#071520');tg.BackButton.show();tg.BackButton.onClick(()=>goBack());}catch(e){}
+
+function goBack(){
+  try{window.Telegram.WebApp.BackButton.hide();}catch(e){}
+  window.location.href='index.html';
+}
+
+function openLink(url){
+  try{window.Telegram.WebApp.openLink(url);}
+  catch(e){window.open(url,'_blank');}
+}
+</script>
+</body>
+</html>
