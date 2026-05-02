@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Трансфер до Домбая</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#4DC8E8;--sky2:#2AAFD0;--sky3:#1890B0;--night:#071520;--text:#0D1F2A;--muted:#607080;--bg:#EEF6FA;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.hero{background:linear-gradient(160deg,#071520 0%,#0D3050 60%,#1A5530 100%);padding:28px 20px 24px;position:relative;overflow:hidden;}
+.hero-stars{position:absolute;top:0;left:0;right:0;height:100%;background-image:radial-gradient(1px 1px at 15% 20%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 40% 10%,rgba(255,255,255,.6) 0%,transparent 100%),radial-gradient(1px 1px at 70% 15%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 85% 5%,rgba(255,255,255,.5) 0%,transparent 100%);}
+.back-btn{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:rgba(255,255,255,.7);cursor:pointer;margin-bottom:16px;border:none;background:none;padding:0;}
+.hero-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:6px;position:relative;z-index:1;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.55);position:relative;z-index:1;line-height:1.5;}
+
+/* Маршруты откуда */
+.sec-h{padding:18px 14px 10px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+
+/* Карточка маршрута */
+.routes{padding:0 14px;display:flex;flex-direction:column;gap:10px;}
+
+.route-card{border-radius:16px;padding:16px;cursor:pointer;transition:transform .15s;text-decoration:none;display:block;}
+.route-card:active{transform:scale(.98);}
+
+.bg-1{background:linear-gradient(145deg,#0A2218,#154830);}
+.bg-2{background:linear-gradient(145deg,#0C2235,#163858);}
+.bg-3{background:linear-gradient(145deg,#1A0A28,#3A1858);}
+
+.rc-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.rc-icon{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.rc-info{flex:1;}
+.rc-from{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:2px;}
+.rc-title{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:#fff;line-height:1.2;}
+
+.rc-details{display:flex;gap:8px;flex-wrap:wrap;}
+.rc-tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.85);}
+.rc-tag.main{background:rgba(255,255,255,.22);color:#fff;}
+
+.rc-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);}
+.rc-price{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+.rc-price-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:1px;}
+.rc-btn{font-size:12px;font-weight:600;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:4px;}
+
+/* Инфо блок */
+.info-block{margin:14px 14px 0;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 16px rgba(13,31,45,.06);}
+.ib-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.ib-row{display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px;color:var(--text);line-height:1.45;}
+.ib-row:last-child{border-bottom:none;}
+.ib-icon{font-size:16px;flex-shrink:0;margin-top:0px;}
+
+/* Кнопка заказать -->*/
+.order-btn{margin:14px 14px 0;background:linear-gradient(135deg,#154830,#2AAFD0);border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:transform .15s;text-decoration:none;}
+.order-btn:active{transform:scale(.98);}
+.order-btn-text{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:#fff;}
+
+/* Нижняя навигация */
+.footer-pad{height:80px;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid rgba(77,200,232,.12);display:flex;padding:6px 0 14px;box-shadow:0 -4px 24px rgba(13,31,45,.09);z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;}
+.ni:active{opacity:.6;}
+.nico{font-size:20px;}
+.nlbl{font-size:10px;font-weight:600;color:#607080;}
+.ni.active .nlbl{color:#2AAFD0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-stars"></div>
+  <button class="back-btn" onclick="goBack()">← Назад</button>
+  <div class="hero-title">🚐 Трансфер до Домбая</div>
+  <div class="hero-sub">Комфортный трансфер из аэропортов и вокзалов. Оплата онлайн, фиксированная цена.</div>
+</div>
+
+<div class="sec-h">Выберите маршрут</div>
+<div class="routes">
+
+  <!-- Минеральные Воды -->
+  <a class="route-card bg-1" href="https://kiwitaxi.tpx.gr/m8vy4WZt?erid=2VtzqvLGQNy" onclick="openLink(this.href); return false;">
+    <div class="rc-top">
+      <div class="rc-icon">✈️</div>
+      <div class="rc-info">
+        <div class="rc-from">Аэропорт</div>
+        <div class="rc-title">Минеральные Воды → Домбай</div>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-tag main">Самый популярный</div>
+      <div class="rc-tag">~220 км</div>
+      <div class="rc-tag">3–4 часа</div>
+    </div>
+    <div class="rc-bottom">
+      <div>
+        
+        <div class="rc-price-sub">Цена зависит от даты и типа авто</div>
+      </div>
+      <div class="rc-btn">Заказать ›</div>
+    </div>
+  </a>
+
+  <!-- Пятигорск -->
+  <a class="route-card bg-2" href="https://kiwitaxi.tpx.gr/m8vy4WZt?erid=2VtzqvLGQNy" onclick="openLink(this.href); return false;">
+    <div class="rc-top">
+      <div class="rc-icon">🚉</div>
+      <div class="rc-info">
+        <div class="rc-from">Ж/д вокзал</div>
+        <div class="rc-title">Пятигорск → Домбай</div>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-tag">~170 км</div>
+      <div class="rc-tag">2.5–3 часа</div>
+    </div>
+    <div class="rc-bottom">
+      <div>
+        
+        <div class="rc-price-sub">Цена зависит от даты и типа авто</div>
+      </div>
+      <div class="rc-btn">Заказать ›</div>
+    </div>
+  </a>
+
+  <!-- Ставрополь -->
+  <a class="route-card bg-3" href="https://kiwitaxi.tpx.gr/m8vy4WZt?erid=2VtzqvLGQNy" onclick="openLink(this.href); return false;">
+    <div class="rc-top">
+      <div class="rc-icon">🏙️</div>
+      <div class="rc-info">
+        <div class="rc-from">Город</div>
+        <div class="rc-title">Ставрополь → Домбай</div>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-tag">~240 км</div>
+      <div class="rc-tag">3.5–4 часа</div>
+    </div>
+    <div class="rc-bottom">
+      <div>
+        
+        <div class="rc-price-sub">Цена зависит от даты и типа авто</div>
+      </div>
+      <div class="rc-btn">Заказать ›</div>
+    </div>
+  </a>
+
+</div>
+
+<!-- Общая кнопка Kiwitaxi -->
+<a class="order-btn" href="https://kiwitaxi.tpx.gr/m8vy4WZt?erid=2VtzqvLGQNy" onclick="openLink(this.href); return false;">
+  <div class="order-btn-text">🚐 Все маршруты и цены на Kiwitaxi</div>
+</a>
+
+<!-- АВИАБИЛЕТЫ -->
+<div class="sec-h">Авиабилеты до Минеральных Вод</div>
+<div class="routes">
+  <a class="route-card bg-2" href="https://aviasales.tpx.gr/2rBfbH95?erid=2VtzqvCojXh" onclick="openLink(this.href); return false;">
+    <div class="rc-top">
+      <div class="rc-icon">✈️</div>
+      <div class="rc-info">
+        <div class="rc-from">Поиск авиабилетов</div>
+        <div class="rc-title">Авиасейлс</div>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-tag main">Лучшие цены</div>
+      <div class="rc-tag">Все авиакомпании</div>
+    </div>
+    <div class="rc-bottom">
+      <div><div class="rc-price-sub">Аэропорт МРВ — ближайший к Домбаю</div></div>
+      <div class="rc-btn">Найти ›</div>
+    </div>
+  </a>
+  <a class="route-card bg-1" href="https://yandex.tpx.gr/as5wQUi6?erid=2VtzqvCn3SM" onclick="openLink(this.href); return false;">
+    <div class="rc-top">
+      <div class="rc-icon">✈️</div>
+      <div class="rc-info">
+        <div class="rc-from">Поиск авиабилетов</div>
+        <div class="rc-title">Яндекс Путешествия</div>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-tag">Кэшбэк Плюс</div>
+      <div class="rc-tag">Оплата картой РФ</div>
+    </div>
+    <div class="rc-bottom">
+      <div><div class="rc-price-sub">Поиск и сравнение цен</div></div>
+      <div class="rc-btn">Найти ›</div>
+    </div>
+  </a>
+  <a class="route-card bg-3" href="https://tutu.tpx.gr/cVTjMKj8?erid=2VtzqukEKvV" onclick="openLink(this.href); return false;">
+    <div class="rc-top">
+      <div class="rc-icon">✈️</div>
+      <div class="rc-info">
+        <div class="rc-from">Поиск авиабилетов</div>
+        <div class="rc-title">Туту.ру</div>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-tag">Удобный поиск</div>
+    </div>
+    <div class="rc-bottom">
+      <div><div class="rc-price-sub">Авиа + ж/д в одном месте</div></div>
+      <div class="rc-btn">Найти ›</div>
+    </div>
+  </a>
+</div>
+
+<!-- ЖД БИЛЕТЫ -->
+<div class="sec-h">Билеты на поезд</div>
+<div class="routes">
+  <a class="route-card bg-1" href="https://yandex.tpx.gr/f1YRMrdu?erid=2VtzqvCn3SM" onclick="openLink(this.href); return false;">
+    <div class="rc-top">
+      <div class="rc-icon">🚂</div>
+      <div class="rc-info">
+        <div class="rc-from">Ж/д билеты</div>
+        <div class="rc-title">Яндекс Путешествия</div>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-tag main">До Невинномысска</div>
+      <div class="rc-tag">До Черкесска</div>
+    </div>
+    <div class="rc-bottom">
+      <div><div class="rc-price-sub">Ближайшие станции к Домбаю</div></div>
+      <div class="rc-btn">Купить ›</div>
+    </div>
+  </a>
+  <a class="route-card bg-2" href="https://tutu.tpx.gr/qM3ZyH4k?erid=2VtzqukEKvV" onclick="openLink(this.href); return false;">
+    <div class="rc-top">
+      <div class="rc-icon">🚂</div>
+      <div class="rc-info">
+        <div class="rc-from">Ж/д билеты</div>
+        <div class="rc-title">Туту.ру</div>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-tag">Все направления</div>
+      <div class="rc-tag">Официальный продавец</div>
+    </div>
+    <div class="rc-bottom">
+      <div><div class="rc-price-sub">Поиск и покупка билетов РЖД</div></div>
+      <div class="rc-btn">Купить ›</div>
+    </div>
+  </a>
+</div>
+
+<!-- АВТОБУСЫ -->
+<div class="sec-h">Автобусы до Домбая</div>
+<div class="routes">
+  <a class="route-card bg-3" href="https://tutu.tpx.gr/ViyQ6WL7?erid=2VtzqukEKvV" onclick="openLink(this.href); return false;">
+    <div class="rc-top">
+      <div class="rc-icon">🚌</div>
+      <div class="rc-info">
+        <div class="rc-from">Автобусы</div>
+        <div class="rc-title">Туту.ру — автобусы</div>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-tag">С ж/д вокзала</div>
+      <div class="rc-tag">Из аэропорта</div>
+    </div>
+    <div class="rc-bottom">
+      <div><div class="rc-price-sub">Регулярные рейсы до Домбая</div></div>
+      <div class="rc-btn">Смотреть ›</div>
+    </div>
+  </a>
+  <a class="route-card bg-1" href="https://transfertickets.ru/" onclick="openLink(this.href); return false;">
+    <div class="rc-top">
+      <div class="rc-icon">🚌</div>
+      <div class="rc-info">
+        <div class="rc-from">Автобусные трансферы</div>
+        <div class="rc-title">TransferTickets.ru</div>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-tag">Из Минвод</div>
+      <div class="rc-tag">Из аэропорта</div>
+    </div>
+    <div class="rc-bottom">
+      <div><div class="rc-price-sub">Расписание и билеты онлайн</div></div>
+      <div class="rc-btn">Смотреть ›</div>
+    </div>
+  </a>
+</div>
+
+<div class="info-block">
+  <div class="ib-title">Полезно знать</div>
+  <div class="ib-row"><div class="ib-icon">✅</div>Фиксированная цена — счётчика нет, никаких сюрпризов в конце поездки</div>
+  <div class="ib-row"><div class="ib-icon">💳</div>Оплата онлайн при бронировании или наличными водителю</div>
+  <div class="ib-row"><div class="ib-icon">🧳</div>Вместительные автомобили — влезут лыжи, сноуборды и чемоданы</div>
+  <div class="ib-row"><div class="ib-icon">⏰</div>Водитель встретит вас с табличкой прямо у выхода</div>
+</div>
+
+<p style="margin:14px 14px 0;font-size:11px;color:var(--muted);line-height:1.6;opacity:.7;">Информация носит справочный характер. Мы не являемся представителями указанных сервисов и не несём ответственности за качество их услуг, актуальность цен и условия бронирования. Все сделки заключаются напрямую между пользователем и сервисом.</p>
+
+<div class="footer-pad"></div>
+
+<nav class="bottom-nav">
+  <div class="ni" onclick="goNav('home')"><span class="nico">🏠</span><span class="nlbl">Главная</span></div>
+  <div class="ni" onclick="goNav('hotels')"><span class="nico">🏨</span><span class="nlbl">Отели</span></div>
+  <div class="ni active"><span class="nico">🚐</span><span class="nlbl">Трансфер</span></div>
+  <div class="ni" onclick="goNav('contacts')"><span class="nico">📞</span><span class="nlbl">Контакты</span></div>
+</nav>
+
+<script>
+try{const tg=window.Telegram.WebApp;tg.ready();tg.expand();tg.setHeaderColor('#071520');tg.BackButton.show();tg.BackButton.onClick(()=>goBack());}catch(e){}
+
+function goBack(){
+  try{window.Telegram.WebApp.BackButton.hide();}catch(e){}
+  window.location.href='index.html';
+}
+
+function goNav(page){
+  window.location.href = page === 'home' ? 'index.html' : page + '.html';
+}
+
+function openLink(url){
+  try{window.Telegram.WebApp.openLink(url);}
+  catch(e){window.open(url,'_blank');}
+}
+</script>
+</body>
+</html>

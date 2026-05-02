@@ -52,7 +52,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .tip-item:last-child{border-bottom:none;}
 .tip-dot{width:6px;height:6px;border-radius:50%;background:var(--sky2);flex-shrink:0;margin-top:5px;}
 
-.footer-pad{height:28px;}
+.footer-pad{height:80px;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid rgba(77,200,232,.12);display:flex;padding:6px 0 14px;box-shadow:0 -4px 24px rgba(13,31,45,.09);z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;}
+.ni:active{opacity:.6;}
+.nico{font-size:20px;}
+.nlbl{font-size:10px;font-weight:600;color:#607080;}
+.ni.active .nlbl{color:#2AAFD0;}
 </style>
 </head>
 <body>
@@ -68,14 +74,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <div class="sh-icon">💡</div>
   <div class="sh-text">
     <div class="sh-title">Как выбрать выгоднее</div>
-    <div class="sh-sub">Проверьте 2–3 площадки — цены могут отличаться на 10–15%. Яндекс часто даёт лучшую цену на отели, ТВИЛ — на апартаменты.</div>
+    <div class="sh-sub">Проверьте все площадки — цены могут отличаться на 10–15%.</div>
   </div>
 </div>
 
 <div class="sec-h">Площадки для бронирования</div>
 <div class="platforms">
 
-  <a class="platform-card bg-yandex" href="https://travel.yandex.ru/hotels/dombay/?marker=472741&utm_source=miniapp" onclick="openLink(this.href); return false;">
+  <a class="platform-card bg-yandex" href="https://yandex.tpx.gr/TPoDgvEX?erid=2VtzqvCn3SM" onclick="openLink(this.href); return false;">
     <div class="pc-header">
       <div class="pc-logo" style="background:rgba(255,204,0,.15);color:#FFCC00;">Я</div>
       <div class="pc-info">
@@ -92,7 +98,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
   </a>
 
-  <a class="platform-card bg-tvil" href="https://tvil.ru/dombay/?marker=472741&utm_source=miniapp" onclick="openLink(this.href); return false;">
+  <a class="platform-card bg-tvil" href="https://tvil.tpx.gr/PRwhpTNu" onclick="openLink(this.href); return false;">
     <div class="pc-header">
       <div class="pc-logo" style="background:rgba(40,200,100,.15);color:#28C864;font-size:14px;">ТВ</div>
       <div class="pc-info">
@@ -108,7 +114,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
   </a>
 
-  <a class="platform-card bg-sutoch" href="https://sutochno.ru/dombay?marker=472741&utm_source=miniapp" onclick="openLink(this.href); return false;">
+  <a class="platform-card bg-sutoch" href="https://sutochno.tpx.gr/FGYE5VLG?erid=2VtzqxfTMYy" onclick="openLink(this.href); return false;">
     <div class="pc-header">
       <div class="pc-logo" style="background:rgba(160,100,255,.15);color:#A064FF;font-size:14px;">СУТ</div>
       <div class="pc-info">
@@ -124,7 +130,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
   </a>
 
-  <a class="platform-card bg-avito" href="https://www.avito.ru/dombay/nedvizhimost/snyat/posutochno?marker=472741&utm_source=miniapp" onclick="openLink(this.href); return false;">
+  <a class="platform-card bg-avito" href="https://ostrovok.tpx.gr/sCZvYpzH?erid=2VtzquYXY77" onclick="openLink(this.href); return false;">
+    <div class="pc-header">
+      <div class="pc-logo" style="background:rgba(255,80,0,.15);color:#FF5000;">О!</div>
+      <div class="pc-info">
+        <div class="pc-name">Островок</div>
+        <div class="pc-desc">Один из крупнейших сервисов бронирования в России. Большой выбор отелей и апартаментов в Домбае.</div>
+      </div>
+      <div class="pc-arrow">›</div>
+    </div>
+    <div class="pc-tag-row">
+      <div class="pc-tag">Отели</div>
+      <div class="pc-tag">Апартаменты</div>
+    </div>
+  </a>
+
+  <a class="platform-card" style="background:linear-gradient(145deg,#1A1508,#4A3010);" href="https://avito.tpx.gr/9BevnROx?erid=2VtzqwMDwe6" onclick="openLink(this.href); return false;">
     <div class="pc-header">
       <div class="pc-logo" style="background:rgba(255,160,0,.15);color:#FFA000;">А</div>
       <div class="pc-info">
@@ -139,17 +160,42 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
   </a>
 
+  <a class="platform-card" style="background:linear-gradient(145deg,#0A2030,#1A4060);" href="https://tutu.tpx.gr/Dvb9SgY9?erid=2VtzqukEKvV" onclick="openLink(this.href); return false;">
+    <div class="pc-header">
+      <div class="pc-logo" style="background:rgba(0,160,255,.15);color:#00A0FF;font-size:14px;font-weight:900;">ТТ</div>
+      <div class="pc-info">
+        <div class="pc-name">Туту.ру</div>
+        <div class="pc-desc">Отели и жильё от популярного российского сервиса. Удобный поиск, оплата картой РФ.</div>
+      </div>
+      <div class="pc-arrow">›</div>
+    </div>
+    <div class="pc-tag-row">
+      <div class="pc-tag">Отели</div>
+      <div class="pc-tag">Оплата картой РФ</div>
+    </div>
+  </a>
+
 </div>
 
 <div class="tip-block">
   <div class="tip-title">Советы по бронированию</div>
-  <div class="tip-item"><div class="tip-dot"></div>Бронируйте за 2–3 недели — цены ниже, выбор шире</div>
-  <div class="tip-item"><div class="tip-dot"></div>Зимний сезон: декабрь–март — самые высокие цены</div>
+  <div class="tip-item"><div class="tip-dot"></div>Бронируйте жильё заранее — цены ниже, выбор шире</div>
+  <div class="tip-item"><div class="tip-dot"></div>Зимний сезон: с декабря по апрель (самые высокие цены)</div>
   <div class="tip-item"><div class="tip-dot"></div>Лучшее расположение — посёлок Домбай, рядом с подъёмниками</div>
-  <div class="tip-item"><div class="tip-dot"></div>Уточняйте наличие парковки — в сезон с ней бывают проблемы</div>
+  <div class="tip-item"><div class="tip-dot"></div>Бронируйте через сервисы — иначе можно попасться на мошенников</div>
+  <div class="tip-item"><div class="tip-dot"></div>Сравнивайте цены на всех площадках</div>
 </div>
 
+<p style="margin:14px 14px 0;font-size:11px;color:var(--muted);line-height:1.6;opacity:.7;">Информация носит справочный характер. Мы не являемся представителями указанных сервисов и не несём ответственности за актуальность цен и условия бронирования. Все сделки заключаются напрямую между пользователем и сервисом.</p>
+
 <div class="footer-pad"></div>
+
+<nav class="bottom-nav">
+  <div class="ni" onclick="goNav('home')"><span class="nico">🏠</span><span class="nlbl">Главная</span></div>
+  <div class="ni active"><span class="nico">🏨</span><span class="nlbl">Отели</span></div>
+  <div class="ni" onclick="goNav('routes')"><span class="nico">🥾</span><span class="nlbl">Маршруты</span></div>
+  <div class="ni" onclick="goNav('contacts')"><span class="nico">📞</span><span class="nlbl">Контакты</span></div>
+</nav>
 
 <script>
 try{const tg=window.Telegram.WebApp;tg.ready();tg.expand();tg.setHeaderColor('#071520');tg.BackButton.show();tg.BackButton.onClick(()=>goBack());}catch(e){}
@@ -159,10 +205,13 @@ function goBack(){
   window.location.href='index.html';
 }
 
-function openLink(url){
+function goNav(page){
+  window.location.href = 'index.html#' + page;
+}
   try{window.Telegram.WebApp.openLink(url);}
   catch(e){window.open(url,'_blank');}
 }
 </script>
 </body>
 </html>
+
