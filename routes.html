@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Маршруты Домбая</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#4DC8E8;--sky2:#2AAFD0;--text:#0D1F2A;--muted:#607080;--bg:#EEF6FA;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.hero{background:linear-gradient(160deg,#071520 0%,#0D3050 55%,#134830 80%,#1A6030 100%);padding:28px 20px 24px;position:relative;overflow:hidden;}
+.hero-stars{position:absolute;top:0;left:0;right:0;height:100%;background-image:radial-gradient(1px 1px at 10% 20%,rgba(255,255,255,.9) 0%,transparent 100%),radial-gradient(1px 1px at 30% 8%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 70% 15%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 85% 5%,rgba(255,255,255,.5) 0%,transparent 100%);}
+.hero-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:6px;position:relative;z-index:1;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.55);position:relative;z-index:1;line-height:1.5;}
+
+/* ФИЛЬТР */
+.filter-wrap{padding:14px 14px 0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;}
+.filter-wrap::-webkit-scrollbar{display:none;}
+.filter-btn{flex-shrink:0;padding:7px 16px;border-radius:999px;border:1.5px solid rgba(42,175,208,.3);background:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.filter-btn.active{color:#fff;}
+.filter-btn[data-f="all"].active{background:var(--sky2);border-color:var(--sky2);}
+.filter-btn[data-f="easy"].active{background:#2E7D32;border-color:#2E7D32;}
+.filter-btn[data-f="medium"].active{background:#F57F17;border-color:#F57F17;}
+.filter-btn[data-f="hard"].active{background:#C62828;border-color:#C62828;}
+
+.sec-h{padding:18px 14px 10px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+
+.routes{padding:0 14px;display:flex;flex-direction:column;gap:10px;}
+
+/* КАРТОЧКА */
+.route-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(13,31,45,.06);}
+.rc-body{padding:14px 16px 12px;}
+.rc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;}
+.rc-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ic-e{background:#E8F5E9;} .ic-m{background:#FFF8E1;} .ic-h{background:#FFEBEE;}
+.rc-header{flex:1;}
+.rc-name{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:4px;}
+.rc-tags{display:flex;gap:5px;flex-wrap:wrap;}
+.tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;}
+.t-e{background:#E8F5E9;color:#2E7D32;}
+.t-m{background:#FFF8E1;color:#F57F17;}
+.t-h{background:#FFEBEE;color:#C62828;}
+.t-c{background:#F3E5F5;color:#6A1B9A;}
+.t-top{background:#FF6B35;color:#fff;}
+.rc-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:10px;}
+.rc-info-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;padding:8px 0;border-top:1px solid rgba(0,0,0,.05);}
+.rc-info-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);}
+.rc-info-item span{font-weight:600;color:var(--text);}
+
+/* КНОПКИ */
+.rc-btns{display:flex;gap:8px;}
+.rc-map-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;background:#F0F8FF;border-radius:10px;text-decoration:none;font-size:12px;font-weight:600;color:var(--sky2);border:1px solid rgba(42,175,208,.2);cursor:pointer;}
+.rc-map-btn:active{background:#DCF0FA;}
+.rc-detail-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;background:#F5F5F5;border-radius:10px;font-size:12px;font-weight:600;color:var(--text);border:none;cursor:pointer;transition:background .15s;}
+.rc-detail-btn:active{background:#E8E8E8;}
+.rc-detail-btn.open{background:#E8F5E9;color:#2E7D32;}
+
+/* РАСКРЫВАЮЩИЙСЯ БЛОК */
+.rc-details{display:none;padding:12px 16px 14px;border-top:1px solid rgba(0,0,0,.06);background:#FAFAFA;}
+.rc-details.open{display:block;}
+.rc-details-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;}
+.rc-step{display:flex;gap:10px;margin-bottom:8px;font-size:13px;color:var(--text);line-height:1.45;}
+.rc-step:last-child{margin-bottom:0;}
+.rc-step-num{width:20px;height:20px;border-radius:50%;background:var(--sky2);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+
+.rc-gear{margin-top:10px;padding:10px 12px;background:#E8F5E9;border-radius:10px;}
+.rc-gear-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:#2E7D32;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;}
+.rc-gear-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+.rc-gear-item{font-size:12px;color:#1B5E20;display:flex;align-items:center;gap:5px;}
+
+.rc-warn{margin-top:10px;padding:8px 10px;background:#FFF8E1;border-radius:8px;font-size:12px;color:#E65100;line-height:1.4;}
+
+.cat-section.hidden{display:none;}
+
+.tip-block{margin:14px 14px 0;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 16px rgba(13,31,45,.06);}
+.tip-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.tip-item{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px;color:var(--text);line-height:1.45;}
+.tip-item:last-child{border-bottom:none;}
+.tip-dot{width:6px;height:6px;border-radius:50%;background:var(--sky2);flex-shrink:0;margin-top:5px;}
+
+.footer-pad{height:80px;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid rgba(77,200,232,.12);display:flex;padding:6px 0 14px;box-shadow:0 -4px 24px rgba(13,31,45,.09);z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;}
+.ni:active{opacity:.6;}
+.nico{font-size:20px;}
+.nlbl{font-size:10px;font-weight:600;color:#607080;}
+.ni.active .nlbl{color:#2AAFD0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-stars"></div>
+  <div class="hero-title">🥾 Маршруты</div>
+  <div class="hero-sub">Пешие маршруты по Домбаю и окрестностям</div>
+</div>
+
+<div class="filter-wrap">
+  <button class="filter-btn active" data-f="all" onclick="filter('all',this)">Все маршруты</button>
+  <button class="filter-btn" data-f="easy" onclick="filter('easy',this)">🟢 Легко</button>
+  <button class="filter-btn" data-f="medium" onclick="filter('medium',this)">🟡 Средне</button>
+  <button class="filter-btn" data-f="hard" onclick="filter('hard',this)">🔴 Сложно</button>
+</div>
+
+<!-- ЛЁГКИЕ -->
+<div class="cat-section" id="cat-easy">
+<div class="sec-h">🟢 Лёгкие маршруты</div>
+<div class="routes">
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-e">🌊</div>
+        <div class="rc-header">
+          <div class="rc-name">Чёртова мельница</div>
+          <div class="rc-tags"><span class="tag t-top">🔥 ТОП</span><span class="tag t-e">Легко</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Короткая прогулка по ущелью Аманауз к каньону, где вода бешено крутится в каменном мешке.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">📍 <span>~3 км</span></div>
+        <div class="rc-info-item">⏱️ <span>1-1.5 ч</span></div>
+        <div class="rc-info-item">📅 <span>Апрель-октябрь</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.273330,41.616444','Чёртова мельница')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>Старт от центра посёлка Домбай, идём по тропе вдоль реки Аманауз</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>Через 1.5 км - вход в ущелье Аманауз. Тропа сужается, скалы поднимаются по обеим сторонам</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>Чёртова мельница - каньон, где река зажата в каменном коридоре и бешено крутится</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">💧 Вода 0.5-1 л</div>
+          <div class="rc-gear-item">👟 Удобная обувь</div>
+          <div class="rc-gear-item">🧥 Ветровка</div>
+          <div class="rc-gear-item">📱 Телефон</div>
+        </div>
+      </div>
+      <div class="rc-warn">⚠️ Взимается плата за вход на территорию нацпарка</div>
+    </div>
+  </div>
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-e">💧</div>
+        <div class="rc-header">
+          <div class="rc-name">Чучхурские водопады</div>
+          <div class="rc-tags"><span class="tag t-top">🔥 ТОП</span><span class="tag t-e">Легко</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Маршрут через Русскую поляну к живописному каскаду водопадов. По пути - «Камень Высоцкого».</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">📍 <span>~8 км</span></div>
+        <div class="rc-info-item">⏱️ <span>3-4 ч</span></div>
+        <div class="rc-info-item">📅 <span>Май-октябрь</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.265625,41.693507','Чучхурские водопады')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>Старт от посёлка, идём по дороге через лес в сторону ущелья Домбай-Ульген</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>Русская поляна - красивая открытая поляна с видами на горы. Здесь стоит «Камень Высоцкого»</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>От поляны тропа идёт вверх к каскаду Чучхурских водопадов. Можно подойти вплотную к воде</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">💧 Вода 1-1.5 л</div>
+          <div class="rc-gear-item">🥪 Перекус</div>
+          <div class="rc-gear-item">👟 Треккинговая обувь</div>
+          <div class="rc-gear-item">🧥 Тёплая куртка</div>
+          <div class="rc-gear-item">🧴 Солнцезащитный крем</div>
+          <div class="rc-gear-item">📱 Телефон</div>
+        </div>
+      </div>
+      <div class="rc-warn">⚠️ Взимается плата за вход на территорию нацпарка</div>
+    </div>
+  </div>
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-e">💧</div>
+        <div class="rc-header">
+          <div class="rc-name">Алибекский водопад</div>
+          <div class="rc-tags"><span class="tag t-top">🔥 ТОП</span><span class="tag t-e">Легко</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Классический маршрут по Алибекскому ущелью к одному из самых мощных водопадов Домбая.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">📍 <span>~5 км</span></div>
+        <div class="rc-info-item">⏱️ <span>2-3 ч</span></div>
+        <div class="rc-info-item">📅 <span>Май-октябрь</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.298693,41.555948','Алибекский водопад')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>Старт от посёлка, идём по грунтовой дороге в сторону Алибекского ущелья</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>По пути - мемориальное кладбище альпинистов. Стоит остановиться и осмотреть</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>Альплагерь Алибек - отсюда хорошо виден ледник</div></div>
+      <div class="rc-step"><div class="rc-step-num">4</div><div>Водопад высотой 25 м. Падает с отполированных скал «бараньи лбы» — можно подойти вплотную</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">💧 Вода 1-1.5 л</div>
+          <div class="rc-gear-item">🥪 Перекус</div>
+          <div class="rc-gear-item">👟 Треккинговая обувь</div>
+          <div class="rc-gear-item">🧥 Тёплая куртка</div>
+          <div class="rc-gear-item">🧴 Солнцезащитный крем</div>
+          <div class="rc-gear-item">📱 Телефон</div>
+        </div>
+      </div>
+      <div class="rc-warn">⚠️ Взимается плата за вход на территорию нацпарка</div>
+    </div>
+  </div>
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-e">🏔️</div>
+        <div class="rc-header">
+          <div class="rc-name">Мусса-Ачитара на канатке</div>
+          <div class="rc-tags"><span class="tag t-top">🔥 ТОП</span><span class="tag t-e">Легко</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Подъём на канатной дороге до 3 200 м. Панорама на весь Главный Кавказский хребет и Эльбрус.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">🚡 <span>Канатная дорога</span></div>
+        <div class="rc-info-item">⛰️ <span>3 200 м</span></div>
+        <div class="rc-info-item">📅 <span>Круглый год</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.299603,41.663363','Мусса-Ачитара')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>Нижняя станция канатной дороги находится в центре посёлка</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>Подъём в три очереди до отметки 3 200 м. Виды с каждой очереди всё лучше</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>На вершине - смотровые площадки с панорамой на Главный Кавказский хребет, Белалакаю и Эльбрус</div></div>
+      <div class="rc-step"><div class="rc-step-num">4</div><div>Летом на вершине можно продолжить пешком вдоль хребта - открываются новые виды</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">🧥 Тёплая куртка</div>
+          <div class="rc-gear-item">🧤 Перчатки (зимой)</div>
+          <div class="rc-gear-item">🧴 Солнцезащитный крем</div>
+          <div class="rc-gear-item">📸 Камера/телефон</div>
+        </div>
+      </div>
+      <div class="rc-warn">💡 На высоте 3 200 м всегда прохладно - даже летом температура может быть около 0°</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- СРЕДНИЕ -->
+<div class="cat-section" id="cat-medium">
+<div class="sec-h">🟡 Средние маршруты</div>
+<div class="routes">
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-m">🏞️</div>
+        <div class="rc-header">
+          <div class="rc-name">Мусса-Ачитарские озёра</div>
+          <div class="rc-tags"><span class="tag t-top">🔥 ТОП</span><span class="tag t-m">Средне</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Официальный экомаршрут нацпарка к двум высокогорным озёрам карстового происхождения - Кёк-Кёль («Павлиний глаз») и Тамлык-Кёль («Капля»). Тропа через хвойный лес выводит на склоны хребта Мусса-Ачитара с панорамными видами.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">📍 <span>12 км</span></div>
+        <div class="rc-info-item">⏱️ <span>6 ч</span></div>
+        <div class="rc-info-item">⛰️ <span>до 2 225 м</span></div>
+        <div class="rc-info-item">📅 <span>Июнь-сентябрь</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.331777,41.670162','КПП Мусса-Ачитарские озёра')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Нитка маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div><strong>КПП «Мусса-Ачитарские озёра»</strong> (43.3318, 41.6701) — старт. Купите билет здесь. Парковка на 20 машин.</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div><strong>Мусса-Ачитарская поляна</strong> (3.8 км, ~2 ч) — живописная поляна 0,5 км² с панорамой на ущелья Гоначхир и Хутый. Памятник советским воинам.</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div><strong>Озеро Кёк-Кёль</strong> (1.2 км, ~1 ч) — «Павлиний глаз», высота 2 225 м. Овальное озеро 117×70 м на фоне зубчатых скал.</div></div>
+      <div class="rc-step"><div class="rc-step-num">4</div><div><strong>Озеро Тамлык-Кёль</strong> (1.7 км, ~0.5 ч) — «Капля», высота 2 160 м. Озеро 81×50 м, окружённое лиственными деревьями. Оба озера карстовые, отличаются цветом воды.</div></div>
+      <div class="rc-step"><div class="rc-step-num">5</div><div><strong>Возвращение</strong> (5.3 км, ~2.5 ч) — тем же путём через лес обратно на КПП.</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">💧 Вода 1.5-2 л</div>
+          <div class="rc-gear-item">🥪 Перекус</div>
+          <div class="rc-gear-item">👟 Треккинговая обувь</div>
+          <div class="rc-gear-item">🧥 Тёплая куртка</div>
+          <div class="rc-gear-item">🧴 Солнцезащитный крем</div>
+          <div class="rc-gear-item">🩹 Аптечка</div>
+          <div class="rc-gear-item">🔋 Power bank</div>
+          <div class="rc-gear-item">🌧️ Дождевик</div>
+        </div>
+      </div>
+      <div class="rc-warn">⚠️ Режим работы: 09:00-18:00, выходить не позже 12:00. Билет оплачивается на КПП. Связь Мегафон ~60%. Дети до 6 лет - недоступно, до 17 лет только с родителями.</div>
+    </div>
+  </div>
+
+
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-m">🏞️</div>
+        <div class="rc-header">
+          <div class="rc-name">Бадукские озёра</div>
+          <div class="rc-tags"><span class="tag t-top">🔥 ТОП</span><span class="tag t-m">Средне</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Маршрут к каскаду трёх озёр с водой от изумрудного до фиолетового цвета. Один из самых популярных однодневных походов.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">📍 <span>~14 км</span></div>
+        <div class="rc-info-item">⏱️ <span>5-6 ч</span></div>
+        <div class="rc-info-item">📅 <span>Июнь-октябрь</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.377368,41.665444','Бадукские озёра')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>Старт от Теберды или от КПП Бадукских озёр. На машине можно доехать до пропускного пункта</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>Тропа через сосновый лес. Набор высоты постепенный, маршрут хорошо маркирован</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>Первое озеро - самое доступное и живописное. Вода изумрудного цвета</div></div>
+      <div class="rc-step"><div class="rc-step-num">4</div><div>Второе и третье озёра - выше по тропе. Цвет воды меняется от бирюзового до фиолетового</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">💧 Вода 1.5-2 л</div>
+          <div class="rc-gear-item">🥪 Перекус</div>
+          <div class="rc-gear-item">👟 Треккинговая обувь</div>
+          <div class="rc-gear-item">🧥 Тёплая куртка</div>
+          <div class="rc-gear-item">🧴 Солнцезащитный крем</div>
+          <div class="rc-gear-item">🌧️ Дождевик</div>
+        </div>
+      </div>
+      <div class="rc-warn">⚠️ Взимается плата за вход. Пропускной пункт находится у начала тропы</div>
+    </div>
+  </div>
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-m">🧊</div>
+        <div class="rc-header">
+          <div class="rc-name">Алибекский ледник</div>
+          <div class="rc-tags"><span class="tag t-top">🔥 ТОП</span><span class="tag t-m">Средне</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Продолжение маршрута за водопадом - к одному из самых доступных ледников Кавказа. Ледник активно тает - соблюдайте осторожность.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">📍 <span>~7 км</span></div>
+        <div class="rc-info-item">⏱️ <span>4-5 ч</span></div>
+        <div class="rc-info-item">📅 <span>Июнь-сентябрь</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.282116,41.528415','Алибекский ледник')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>Маршрут начинается там же, где и к водопаду. Проходим мимо водопада и продолжаем вверх</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>Тропа становится круче. Открываются виды на Белалакаю и другие вершины</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>Ледник. Голубые ледяные поля, трещины и звук тающей воды. Не подходите к краю!</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">💧 Вода 1.5-2 л</div>
+          <div class="rc-gear-item">🥪 Перекус</div>
+          <div class="rc-gear-item">👟 Треккинговая обувь</div>
+          <div class="rc-gear-item">🧥 Тёплая куртка</div>
+          <div class="rc-gear-item">🕶️ Солнечные очки</div>
+          <div class="rc-gear-item">🧴 Солнцезащитный крем</div>
+        </div>
+      </div>
+      <div class="rc-warn">⚠️ Ледник активно тает - держитесь подальше от края и трещин. Возможны камнепады</div>
+    </div>
+  </div>
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-m">🏞️</div>
+        <div class="rc-header">
+          <div class="rc-name">Турье озеро</div>
+          <div class="rc-tags"><span class="tag t-m">Средне</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Высокогорное бирюзовое озеро, куда приходят на водопой туры и серны. Виды с берега - одни из лучших в районе Домбая.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">📍 <span>~8 км</span></div>
+        <div class="rc-info-item">⏱️ <span>5-6 ч</span></div>
+        <div class="rc-info-item">📅 <span>Июль-сентябрь</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.296724,41.543075','Турье озеро')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>Маршрут идёт через Алибекское ущелье мимо кладбища альпинистов и альплагеря</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>После водопада тропа уходит вправо вверх по крутому склону</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>Выход на плато с бирюзовым озером. Панорама на все окружающие вершины</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">💧 Вода 1.5-2 л</div>
+          <div class="rc-gear-item">🥪 Перекус</div>
+          <div class="rc-gear-item">👟 Треккинговая обувь</div>
+          <div class="rc-gear-item">🧥 Тёплая куртка</div>
+          <div class="rc-gear-item">🕶️ Солнечные очки</div>
+          <div class="rc-gear-item">📸 Камера</div>
+        </div>
+      </div>
+      <div class="rc-warn">💡 На озере часто можно увидеть горных туров и серн - не шумите при подходе</div>
+    </div>
+  </div>
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-m">💧</div>
+        <div class="rc-header">
+          <div class="rc-name">Суфруджинские водопады</div>
+          <div class="rc-tags"><span class="tag t-top">🔥 ТОП</span><span class="tag t-m">Средне</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Маршрут к каскаду трёх водопадов в ущелье Аманауз. Большой Суфруджинский достигает 250 метров высоты.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">📍 <span>~6 км</span></div>
+        <div class="rc-info-item">⏱️ <span>3-4 ч</span></div>
+        <div class="rc-info-item">📅 <span>Май-июль</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.261869,41.608479','Суфруджинские водопады')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>Маршрут начинается в ущелье Аманауз. Тропа идёт по левому берегу реки</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>Через Чёртову мельницу продолжаем вглубь ущелья</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>Нижний и средний водопады. Большой Суфруджинский - 250 метров - виден издалека</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">💧 Вода 1-1.5 л</div>
+          <div class="rc-gear-item">🥪 Перекус</div>
+          <div class="rc-gear-item">👟 Треккинговая обувь</div>
+          <div class="rc-gear-item">🧥 Ветровка/куртка</div>
+          <div class="rc-gear-item">🌧️ Дождевик</div>
+          <div class="rc-gear-item">📱 Телефон</div>
+        </div>
+      </div>
+      <div class="rc-warn">💡 Лучшее время - конец мая и июнь, когда тает снег и водопады особенно мощные</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- СЛОЖНЫЕ -->
+<div class="cat-section" id="cat-hard">
+<div class="sec-h">🔴 Сложные маршруты</div>
+<div class="routes">
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-h">🏞️</div>
+        <div class="rc-header">
+          <div class="rc-name">Муруджинские озёра</div>
+          <div class="rc-tags"><span class="tag t-h">Сложно</span><span class="tag t-h">2 дня</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Голубое и Чёрное озёра в долине Уллу-Муруджу - одни из красивейших и труднодоступных мест региона. Поход с ночёвкой.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">📍 <span>~30 км</span></div>
+        <div class="rc-info-item">⏱️ <span>2 дня</span></div>
+        <div class="rc-info-item">📅 <span>Июль-август</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.326855,41.762056','Муруджинские озёра')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>День 1: выход из посёлка по дороге в сторону Муруджу. Длинный подход по долине реки</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>Подъём в долину Уллу-Муруджу. Ночёвка в палатке на берегу Голубого озера</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>День 2: Чёрное озеро выше по склону. Возвращение тем же путём</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">🏕️ Палатка и спальник</div>
+          <div class="rc-gear-item">💧 Фильтр для воды</div>
+          <div class="rc-gear-item">🍲 Горелка и еда</div>
+          <div class="rc-gear-item">👟 Треккинговые ботинки</div>
+          <div class="rc-gear-item">🧥 Тёплая одежда</div>
+          <div class="rc-gear-item">🩹 Аптечка</div>
+          <div class="rc-gear-item">🗺️ Карта/навигатор</div>
+          <div class="rc-gear-item">🔦 Фонарик</div>
+        </div>
+      </div>
+      <div class="rc-warn">⚠️ Только с палаткой. Нужно разрешение нацпарка. Рекомендуется идти с опытным гидом</div>
+    </div>
+  </div>
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-h">🏔️</div>
+        <div class="rc-header">
+          <div class="rc-name">Перевал Кичи-Ауш</div>
+          <div class="rc-tags"><span class="tag t-h">Сложно</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Маршрут через Мухинское ущелье к перевалу с видом на Маркинские озёра и панорамой на горные хребты.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">📍 <span>~20 км</span></div>
+        <div class="rc-info-item">⏱️ <span>8-10 ч</span></div>
+        <div class="rc-info-item">📅 <span>Июль-сентябрь</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.451211,41.612467','Перевал Кичи-Ауш')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>Выезд в Мухинское ущелье. Первую часть можно проехать на машине или квадроцикле</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>Крутой подъём по склону к перевалу. Набор высоты более 1 000 м</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>С перевала открывается вид на Маркинские озёра и цепочку горных хребтов</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">💧 Вода 2-3 л</div>
+          <div class="rc-gear-item">🥪 Калорийный перекус</div>
+          <div class="rc-gear-item">👟 Треккинговые ботинки</div>
+          <div class="rc-gear-item">🧥 Тёплая куртка</div>
+          <div class="rc-gear-item">🕶️ Солнечные очки</div>
+          <div class="rc-gear-item">🩹 Аптечка</div>
+          <div class="rc-gear-item">🗺️ Карта/навигатор</div>
+          <div class="rc-gear-item">🌧️ Дождевик</div>
+        </div>
+      </div>
+      <div class="rc-warn">⚠️ Маршрут только для подготовленных туристов. Рекомендуется ранний выход - до 6:00</div>
+    </div>
+  </div>
+
+  <div class="route-card">
+    <div class="rc-body">
+      <div class="rc-top">
+        <div class="rc-icon ic-h">🏔️</div>
+        <div class="rc-header">
+          <div class="rc-name">Клухорское озеро</div>
+          <div class="rc-tags"><span class="tag t-h">Сложно</span><span class="tag t-c">Нужен пропуск</span></div>
+        </div>
+      </div>
+      <div class="rc-desc">Самое крупное озеро заповедника у Клухорского перевала на высоте 2 700 м. Пограничная зона - нужен пропуск.</div>
+      <div class="rc-info-row">
+        <div class="rc-info-item">⛰️ <span>2 700 м</span></div>
+        <div class="rc-info-item">⏱️ <span>6-8 ч</span></div>
+        <div class="rc-info-item">📅 <span>Июль-сентябрь</span></div>
+      </div>
+      <div class="rc-btns">
+        <button class="rc-detail-btn" onclick="toggleDetails(this)">📖 Подробнее</button>
+        <a class="rc-map-btn" onclick="openMap('43.251522,41.862691','Клухорское озеро')">📍 На карте</a>
+      </div>
+    </div>
+    <div class="rc-details">
+      <div class="rc-details-title">Описание маршрута</div>
+      <div class="rc-step"><div class="rc-step-num">1</div><div>Маршрут начинается по Военно-Сухумской дороге в Гоначхирском ущелье</div></div>
+      <div class="rc-step"><div class="rc-step-num">2</div><div>Крутой набор высоты по тропе вдоль реки Клухор</div></div>
+      <div class="rc-step"><div class="rc-step-num">3</div><div>Озеро освобождается ото льда лишь к середине лета. Суровые пейзажи, снежники по берегам</div></div>
+      <div class="rc-gear">
+        <div class="rc-gear-title">🎒 Возьмите с собой</div>
+        <div class="rc-gear-grid">
+          <div class="rc-gear-item">💧 Вода 2-3 л</div>
+          <div class="rc-gear-item">🥪 Калорийный перекус</div>
+          <div class="rc-gear-item">👟 Треккинговые ботинки</div>
+          <div class="rc-gear-item">🧥 Тёплая куртка</div>
+          <div class="rc-gear-item">🕶️ Солнечные очки</div>
+          <div class="rc-gear-item">📄 Пропуск ФСБ</div>
+          <div class="rc-gear-item">🗺️ Карта/навигатор</div>
+          <div class="rc-gear-item">🩹 Аптечка</div>
+        </div>
+      </div>
+      <div class="rc-warn">⚠️ Пограничная зона. Заранее оформите пропуск в ФСБ и разрешение нацпарка</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div style="margin:14px 14px 0;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 16px rgba(13,31,45,.06);">
+  <div style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">📞 Полезные контакты</div>
+  <a href="tel:+78787951261" style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05);text-decoration:none;">
+    <span style="font-size:16px;">🏔️</span>
+    <div><div style="font-size:13px;font-weight:600;color:var(--text);">Тебердинский нацпарк</div><div style="font-size:12px;color:var(--sky2);">8 (87879) 5-12-61</div></div>
+  </a>
+  <a href="tel:+79283865132" style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05);text-decoration:none;">
+    <span style="font-size:16px;">🚁</span>
+    <div><div style="font-size:13px;font-weight:600;color:var(--text);">МЧС (мобильный)</div><div style="font-size:12px;color:var(--sky2);">8 (928) 386-51-32</div></div>
+  </a>
+  <a href="tel:+78787258138" style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05);text-decoration:none;">
+    <span style="font-size:16px;">🚁</span>
+    <div><div style="font-size:13px;font-weight:600;color:var(--text);">МЧС (стационарный)</div><div style="font-size:12px;color:var(--sky2);">8 (87872) 5-81-38</div></div>
+  </a>
+  <a href="tel:+78787925093" style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05);text-decoration:none;">
+    <span style="font-size:16px;">🛂</span>
+    <div><div style="font-size:13px;font-weight:600;color:var(--text);">Пограничная служба</div><div style="font-size:12px;color:var(--sky2);">8 (87879) 2-50-93</div></div>
+  </a>
+  <a href="tel:+79286590123" style="display:flex;align-items:center;gap:10px;padding:7px 0;text-decoration:none;">
+    <span style="font-size:16px;">ℹ️</span>
+    <div><div style="font-size:13px;font-weight:600;color:var(--text);">Турист. инфоцентр Домбая</div><div style="font-size:12px;color:var(--sky2);">8 (928) 659-01-23</div></div>
+  </a>
+</div>
+
+<div class="tip-block">
+  <div class="tip-title">Перед выходом на маршрут</div>
+  <div class="tip-item"><div class="tip-dot"></div>Возьмите достаточно воды и еды - в горах нет магазинов</div>
+  <div class="tip-item"><div class="tip-dot"></div>Треккинговая обувь обязательна - тропы бывают мокрыми и скользкими</div>
+  <div class="tip-item"><div class="tip-dot"></div>Погода меняется быстро - возьмите тёплую куртку даже летом</div>
+  <div class="tip-item"><div class="tip-dot"></div>Большинство маршрутов платные - вход на территорию нацпарка</div>
+  <div class="tip-item"><div class="tip-dot"></div>На сложные маршруты не ходите в одиночку - предупредите кого-нибудь</div>
+</div>
+
+<div class="footer-pad"></div>
+
+<nav class="bottom-nav">
+  <div class="ni" onclick="goNav('home')"><span class="nico">🏠</span><span class="nlbl">Главная</span></div>
+  <div class="ni" onclick="goNav('hotels')"><span class="nico">🏨</span><span class="nlbl">Отели</span></div>
+  <div class="ni active"><span class="nico">🥾</span><span class="nlbl">Маршруты</span></div>
+  <div class="ni" onclick="goNav('contacts')"><span class="nico">📞</span><span class="nlbl">Контакты</span></div>
+</nav>
+
+<script>
+try{const tg=window.Telegram.WebApp;tg.ready();tg.expand();tg.setHeaderColor('#071520');tg.BackButton.show();tg.BackButton.onClick(()=>{window.location.href='index.html';});}catch(e){}
+
+const cats=['easy','medium','hard'];
+
+function filter(cat,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  cats.forEach(c=>{
+    document.getElementById('cat-'+c).classList.toggle('hidden', cat!=='all' && cat!==c);
+  });
+  window.scrollTo(0,0);
+}
+
+function toggleDetails(btn){
+  const card = btn.closest('.route-card');
+  const details = card.querySelector('.rc-details');
+  const isOpen = details.classList.contains('open');
+  details.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  btn.textContent = isOpen ? '📖 Подробнее' : '📕 Свернуть';
+}
+
+function goNav(page){
+  const map={home:'index.html',hotels:'hotels.html',contacts:'index.html'};
+  window.location.href=map[page]||'index.html';
+}
+
+function openMap(coords,name){
+  const url='https://yandex.ru/maps/?pt='+coords.split(',').reverse().join(',')+'&z=15&l=map&text='+encodeURIComponent(name);
+  try{window.Telegram.WebApp.openLink(url);}
+  catch(e){window.open(url,'_blank');}
+}
+</script>
+</body>
+</html>
