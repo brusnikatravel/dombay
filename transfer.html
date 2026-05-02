@@ -294,7 +294,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <div class="ib-row"><div class="ib-icon">⏰</div>Водитель встретит вас с табличкой прямо у выхода</div>
 </div>
 
-<p style="margin:14px 14px 0;font-size:11px;color:var(--muted);line-height:1.6;opacity:.7;">Информация носит справочный характер. Мы не являемся представителями указанных сервисов и не несём ответственности за качество их услуг, актуальность цен и условия бронирования. Все сделки заключаются напрямую между пользователем и сервисом.</p>
+<p style="margin:14px 14px 0;font-size:11px;color:var(--muted);line-height:1.35;opacity:.6;">Информация носит справочный характер. Мы не являемся представителями указанных сервисов и не несём ответственности за качество их услуг, актуальность цен и условия бронирования. Все сделки заключаются напрямую между пользователем и сервисом.</p>
 
 <div class="footer-pad"></div>
 
@@ -314,7 +314,8 @@ function goBack(){
 }
 
 function goNav(page){
-  window.location.href = page === 'home' ? 'index.html' : page + '.html';
+  const map={home:'index.html',hotels:'hotels.html',transfer:'transfer.html',routes:'index.html',contacts:'index.html'};
+  window.location.href=map[page]||'index.html';
 }
 
 function openLink(url){
