@@ -318,6 +318,7 @@ function goPage(id){
   if(id==='hotels'){window.location.href='hotels.html';return;}
   if(id==='transfer'){window.location.href='transfer.html';return;}
   if(id==='guide'){window.location.href='guide.html';return;}
+  if(id==='excursions'){window.location.href='excursions.html';return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
@@ -340,7 +341,10 @@ function openChannel(){
 }
 
 function openTour(type){
-  const u={winter:'https://t.me/dombay_arhiz',summer:'https://t.me/dombay_arhiz'};
+  const u={
+    winter:'https://brusnika.travel/dombay?utm_source=tgapp-dombay',
+    summer:'https://brusnika.travel/dombay-leto?utm_source=tgapp-dombay-leto'
+  };
   try{window.Telegram.WebApp.openTelegramLink(u[type]);}
   catch(e){window.open(u[type],'_blank');}
 }
