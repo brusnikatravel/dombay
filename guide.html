@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Гид по Домбаю</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#4DC8E8;--sky2:#2AAFD0;--sky3:#1890B0;--text:#0D1F2A;--muted:#607080;--bg:#EEF6FA;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.hero{background:linear-gradient(160deg,#071520 0%,#0D3050 55%,#134870 80%,#2AAFD0 100%);padding:28px 20px 24px;position:relative;overflow:hidden;}
+.hero-stars{position:absolute;top:0;left:0;right:0;height:100%;background-image:radial-gradient(1px 1px at 10% 20%,rgba(255,255,255,.9) 0%,transparent 100%),radial-gradient(1px 1px at 30% 8%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 55% 14%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 75% 5%,rgba(255,255,255,.6) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 88% 18%,rgba(255,255,255,.9) 0%,transparent 100%);}
+.hero-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:6px;position:relative;z-index:1;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.55);position:relative;z-index:1;line-height:1.5;}
+
+.filter-wrap{padding:14px 14px 0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;}
+.filter-wrap::-webkit-scrollbar{display:none;}
+.filter-btn{flex-shrink:0;padding:7px 14px;border-radius:999px;border:1.5px solid rgba(42,175,208,.3);background:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.filter-btn.active{background:var(--sky2);border-color:var(--sky2);color:#fff;}
+
+.sec-h{padding:18px 14px 10px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+
+.places{padding:0 14px;display:flex;flex-direction:column;gap:10px;}
+
+.place-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(13,31,45,.06);}
+
+.pc-body{padding:14px 16px 12px;}
+.pc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;}
+.pc-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ic-m{background:#E3F0FB;} .ic-l{background:#E0F7F4;} .ic-w{background:#EBF5FF;}
+.ic-c{background:#FFF3E0;} .ic-g{background:#E8F4FF;} .ic-ch{background:#F5F0FF;} .ic-o{background:#F0F0F0;}
+.pc-header{flex:1;}
+.pc-name{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:4px;}
+.pc-tags{display:flex;gap:5px;flex-wrap:wrap;}
+.tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;}
+.t-h{background:#E3F0FB;color:#1565C0;}
+.t-e{background:#E8F5E9;color:#2E7D32;}
+.t-m{background:#FFF8E1;color:#F57F17;}
+.t-d{background:#FFEBEE;color:#C62828;}
+.t-c{background:#F3E5F5;color:#6A1B9A;}
+.t-i{background:#FBE9E7;color:#BF360C;}
+.pc-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.pc-map-btn{display:flex;align-items:center;gap:7px;padding:9px 14px;background:#F0F8FF;border-radius:10px;text-decoration:none;font-size:12px;font-weight:600;color:var(--sky2);border:1px solid rgba(42,175,208,.2);transition:background .15s;cursor:pointer;}
+.pc-map-btn:active{background:#DCF0FA;}
+.pc-map-icon{font-size:14px;}
+.pc-info-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;padding:8px 0;border-top:1px solid rgba(0,0,0,.05);}
+.pc-info-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);}
+.pc-info-item span{font-weight:600;color:var(--text);}
+
+/* БЕЙДЖ ПОПУЛЯРНОГО */
+.popular-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;background:#FF6B35;color:#fff;margin-left:6px;vertical-align:middle;}
+
+/* ТОП МЕСТ — горизонтальная прокрутка */
+.top-section{padding:0 14px;}
+.top-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+.top-scroll::-webkit-scrollbar{display:none;}
+.top-card{flex-shrink:0;width:130px;background:#fff;border-radius:14px;padding:14px 12px;box-shadow:0 2px 12px rgba(13,31,45,.07);cursor:pointer;transition:transform .15s;position:relative;}
+.top-card:active{transform:scale(.96);}
+.top-card-icon{font-size:28px;margin-bottom:8px;}
+.top-card-name{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:4px;}
+.top-card-sub{font-size:11px;color:var(--muted);line-height:1.3;}
+.top-card-hot{position:absolute;top:8px;right:8px;font-size:10px;font-weight:700;padding:2px 6px;border-radius:999px;background:#FF6B35;color:#fff;}
+
+.cat-section.hidden{display:none;}
+
+.footer-pad{height:80px;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid rgba(77,200,232,.12);display:flex;padding:6px 0 14px;box-shadow:0 -4px 24px rgba(13,31,45,.09);z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;}
+.ni:active{opacity:.6;}
+.nico{font-size:20px;}
+.nlbl{font-size:10px;font-weight:600;color:#607080;}
+.ni.active .nlbl{color:#2AAFD0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-stars"></div>
+  <div class="hero-title">🗺️ Гид по Домбаю</div>
+  <div class="hero-sub">Все интересные места курорта и окрестностей</div>
+</div>
+
+<div class="filter-wrap">
+  <button class="filter-btn active" onclick="filter('all',this)">Все места</button>
+  <button class="filter-btn" onclick="filter('top',this)">🔥 Топ мест</button>
+  <button class="filter-btn" onclick="filter('mountain',this)">⛰️ Вершины</button>
+  <button class="filter-btn" onclick="filter('lake',this)">🏞️ Озёра</button>
+  <button class="filter-btn" onclick="filter('waterfall',this)">💧 Водопады</button>
+  <button class="filter-btn" onclick="filter('canyon',this)">🏔️ Ущелья</button>
+  <button class="filter-btn" onclick="filter('glacier',this)">🧊 Ледники</button>
+  <button class="filter-btn" onclick="filter('church',this)">⛪ Храмы</button>
+  <button class="filter-btn" onclick="filter('other',this)">✨ Другое</button>
+</div>
+
+<!-- ВЕРШИНЫ -->
+<div class="cat-section" id="cat-mountain">
+  <div class="sec-h">⛰️ Горные вершины</div>
+  <div class="places">
+
+    <div class="place-card" id="musa">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-m">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Мусса-Ачитара</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-h">3 200 м</span><span class="tag t-e">Канатная дорога</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Главная обзорная площадка Домбая — сюда поднимают канатные дороги. С вершины открывается вид на весь Главный Кавказский хребет и Эльбрус. Обязательное место для каждого, кто приезжает на курорт.</div>
+        <div class="pc-info-row"><div class="pc-info-item">⛰️ <span>3 200 м</span></div><div class="pc-info-item">🚡 <span>Канатная дорога</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2683,41.6875','Мусса-Ачитара')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card" id="alibek-water">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-m">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Белалакая</div>
+            <div class="pc-tags"><span class="tag t-h">3 861 м</span><span class="tag t-i">Символ Домбая</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">«Полосатая скала» — главный символ Домбая. Характерные белые полосы образованы кварцевыми жилами. Вершина хорошо видна из посёлка и с канатных дорог.</div>
+        <div class="pc-info-row"><div class="pc-info-item">⛰️ <span>3 861 м</span></div><div class="pc-info-item">👁️ <span>Видна из посёлка</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2750,41.7050','Белалакая')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card" id="baduk">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-m">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Домбай-Ульген</div>
+            <div class="pc-tags"><span class="tag t-h">4 046 м</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Высшая точка всего региона. Очертания вершины напоминают спящего зубра. Восхождение только для опытных альпинистов с гидом.</div>
+        <div class="pc-info-row"><div class="pc-info-item">⛰️ <span>4 046 м</span></div><div class="pc-info-item">🚡 <span>Видна с подъёмников</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2833,41.7167','Домбай-Ульген')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card" id="alibek-glacier">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-m">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Сулахат</div>
+            <div class="pc-tags"><span class="tag t-h">3 439 м</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Гора с силуэтом лежащей девушки — о ней сложена красивая кавказская легенда. Хорошо видна с нижней станции канатной дороги.</div>
+        <div class="pc-info-row"><div class="pc-info-item">⛰️ <span>3 439 м</span></div><div class="pc-info-item">👁️ <span>Видна с нижней станции</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2700,41.6950','Сулахат')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card" id="devil">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-m">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Зуб Суфруджу</div>
+            <div class="pc-tags"><span class="tag t-h">3 629 м</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Острый скальный пик над ущельем Аманауз. Напоминает клык — одна из самых узнаваемых вершин Домбая. Хорошо виден с тропы к водопадам.</div>
+        <div class="pc-info-row"><div class="pc-info-item">⛰️ <span>3 629 м</span></div><div class="pc-info-item">👁️ <span>Виден из посёлка</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2600,41.7200','Зуб Суфруджу')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card" id="chuchkhur">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-m">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Пик Инэ</div>
+            <div class="pc-tags"><span class="tag t-h">3 455 м</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Название переводится с карачаевского как «игла» — за острый, вытянутый силуэт. Выделяется среди соседних вершин своей характерной формой. Хорошо виден с обзорных точек курорта.</div>
+        <div class="pc-info-row"><div class="pc-info-item">⛰️ <span>3 455 м</span></div><div class="pc-info-item">👁️ <span>С обзорных точек</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2717,41.7133','Пик Инэ')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ОЗЁРА -->
+<div class="cat-section" id="cat-lake">
+  <div class="sec-h">🏞️ Озёра</div>
+  <div class="places">
+
+    <div class="place-card" id="tarel">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-l">🏞️</div>
+          <div class="pc-header">
+            <div class="pc-name">Бадукские озёра</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Каскад из трёх озёр с водой, меняющей цвет от изумрудного до фиолетового в зависимости от освещения. Один из самых популярных пеших маршрутов. Тропа проходит через красивый лес.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~14 км от посёлка</span></div><div class="pc-info-item">🥾 <span>Легко</span></div><div class="pc-info-item">📅 <span>Июнь–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.3833,41.7167','Бадукские озёра')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-l">🏞️</div>
+          <div class="pc-header">
+            <div class="pc-name">Турье озеро</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-e">Ущелье Алибек</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Бирюзовое высокогорное озеро. Название дано по горным козлам-турам, которые приходят сюда на водопой. Виды с берега — одни из лучших в районе Домбая.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~8 км от посёлка</span></div><div class="pc-info-item">🥾 <span>Средне</span></div><div class="pc-info-item">📅 <span>Июль–сентябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2550,41.6800','Турье озеро')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-l">🏞️</div>
+          <div class="pc-header">
+            <div class="pc-name">Туманлы-Кёль (Форельное)</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-c">На авто</span><span class="tag t-e">Ущелье Гоначхир</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Самое тёплое озеро в Тебердинском парке. Расположено в живописном Гоначхирском ущелье — доехать можно на машине. Отличное место для пикника.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~20 км от посёлка</span></div><div class="pc-info-item">🚗 <span>На авто</span></div><div class="pc-info-item">📅 <span>Май–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.3667,41.7333','Туманлы-Кёль')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-l">🏞️</div>
+          <div class="pc-header">
+            <div class="pc-name">Хурла-Кёль</div>
+            <div class="pc-tags"><span class="tag t-c">Джиппинг</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Живописное озеро в горах, к которому организуются джип-туры. Один из популярных маршрутов активного отдыха летом.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>Далеко от посёлка</span></div><div class="pc-info-item">🚙 <span>Джиппинг</span></div><div class="pc-info-item">📅 <span>Июнь–сентябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.3000,41.8500','Хурла-Кёль')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-l">🏞️</div>
+          <div class="pc-header">
+            <div class="pc-name">Муруджинские озёра</div>
+            <div class="pc-tags"><span class="tag t-d">Только с палаткой</span><span class="tag t-m">Нужно разрешение</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Голубое и Чёрное озёра в долине Уллу-Муруджу. Считаются одними из самых красивых и труднодоступных мест региона. Поход занимает 2 дня.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~30 км от посёлка</span></div><div class="pc-info-item">🥾 <span>Сложно (2 дня)</span></div><div class="pc-info-item">📅 <span>Июль–август</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2167,41.9000','Муруджинские озёра')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-l">🏞️</div>
+          <div class="pc-header">
+            <div class="pc-name">Кара-Кёль</div>
+            <div class="pc-tags"><span class="tag t-c">На авто</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Самое старое озеро региона — его возраст около 10 000 лет. Расположено прямо в черте Теберды, легко доступно. Тёмная вода и красивое лесное окружение создают особую атмосферу.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>В Теберде</span></div><div class="pc-info-item">🥾 <span>Легко</span></div><div class="pc-info-item">📅 <span>Круглый год</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.4500,41.7400','Каракёль')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-l">🏞️</div>
+          <div class="pc-header">
+            <div class="pc-name">Азгекские озёра</div>
+            <div class="pc-tags"><span class="tag t-e">Ущелье Азгек</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Группа высокогорных озёр в верховьях реки Азгек. Одно из самых нетронутых и малолюдных мест в районе Домбая. Для тех, кто хочет уйти подальше от туристических маршрутов.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~35 км от посёлка</span></div><div class="pc-info-item">🥾 <span>Сложно</span></div><div class="pc-info-item">📅 <span>Июль–август</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2333,41.8000','Азгекские озёра')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-l">🏞️</div>
+          <div class="pc-header">
+            <div class="pc-name">Мухинское озеро (Шобайдак-Кёль)</div>
+            <div class="pc-tags"><span class="tag t-c">Джиппинг</span><span class="tag t-e">Ущелье Муху</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Высокогорное озеро на высоте около 2 960 м в Мухинском ущелье. Вода в нём почти безжизненна из-за особого химического состава, а пейзажи вокруг — суровые и впечатляющие. Добраться можно только на джипе или пешком.</div>
+        <div class="pc-info-row"><div class="pc-info-item">🚙 <span>Джиппинг</span></div><div class="pc-info-item">📅 <span>Июль–сентябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.3167,41.8167','Мухинское озеро')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ВОДОПАДЫ -->
+<div class="cat-section" id="cat-waterfall">
+  <div class="sec-h">💧 Водопады</div>
+  <div class="places">
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-w">💧</div>
+          <div class="pc-header">
+            <div class="pc-name">Алибекский водопад</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-e">Ущелье Алибек</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Один из самых мощных водопадов Домбая. Падает с отполированных скал «бараньи лбы». По пути к водопаду — мемориальное кладбище альпинистов и вид на ледник.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~5 км от посёлка</span></div><div class="pc-info-item">🥾 <span>Легко</span></div><div class="pc-info-item">📅 <span>Май–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2500,41.7400','Алибекский водопад')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card" id="sufrugini">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-w">💧</div>
+          <div class="pc-header">
+            <div class="pc-name">Суфруджинские водопады</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-e">Ущелье Аманауз</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Каскад из трёх водопадов. Большой Суфруджинский — один из самых высоких водопадов Кавказа. Особенно красив в конце мая — начале июня во время таяния снегов.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~6 км от посёлка</span></div><div class="pc-info-item">🥾 <span>Средне</span></div><div class="pc-info-item">📅 <span>Май–июль</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2450,41.7550','Суфруджинские водопады')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-w">💧</div>
+          <div class="pc-header">
+            <div class="pc-name">Чучхурские водопады</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-e">Ущелье Домбай-Ульген</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Живописный каскад водопадов. Путь проходит через Русскую поляну — место, где бывал Владимир Высоцкий. У поляны находится знаменитый «Камень Высоцкого».</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~8 км от посёлка</span></div><div class="pc-info-item">🥾 <span>Легко</span></div><div class="pc-info-item">📅 <span>Май–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2750,41.7300','Чучхурские водопады')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-w">💧</div>
+          <div class="pc-header">
+            <div class="pc-name">«Чёртова мельница»</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-e">Ущелье Аманауз</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Каньон в ущелье Аманауз, где горная река зажата в тесном скальном коридоре и бешено крутится в каменном мешке. Одно из самых атмосферных мест Домбая.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~3 км от посёлка</span></div><div class="pc-info-item">🥾 <span>Легко</span></div><div class="pc-info-item">📅 <span>Апрель–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2667,41.7167','Чёртова мельница')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-w">💧</div>
+          <div class="pc-header">
+            <div class="pc-name">Водопад Шумка</div>
+            <div class="pc-tags"><span class="tag t-c">На авто</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Небольшой, но красивый водопад в окрестностях Теберды. Лёгкая прогулка — подходит для всей семьи. Хорошо сочетается с посещением Теберды.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>В Теберде</span></div><div class="pc-info-item">🥾 <span>Легко</span></div><div class="pc-info-item">📅 <span>Апрель–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.4333,41.7500','Водопад Шумка')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-w">💧</div>
+          <div class="pc-header">
+            <div class="pc-name">Водопад Джугутурлучат</div>
+            <div class="pc-tags"><span class="tag t-e">Ущелье Домбай-Ульген</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Водопад, срывающийся прямо с одноимённого ледника. Хорошо виден с канатной дороги — один из первых видов, которые открываются при подъёме. Название переводится как «место, где живут туры».</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>Виден с канатки</span></div><div class="pc-info-item">📅 <span>Май–сентябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2617,41.7050','Водопад Джугутурлучат')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- УЩЕЛЬЯ -->
+<div class="cat-section" id="cat-canyon">
+  <div class="sec-h">🏔️ Ущелья и перевалы</div>
+  <div class="places">
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-c">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Ущелье Аманауз</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-m">Взимается плата</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Самое узкое и суровое ущелье Домбая. Название переводится как «злая пасть» — отвесные скалы высотой сотни метров сдвигаются почти вплотную. Здесь находится «Чёртова мельница».</div>
+        <div class="pc-info-row"><div class="pc-info-item">🥾 <span>Пешком</span></div><div class="pc-info-item">📅 <span>Апрель–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2600,41.7200','Ущелье Аманауз')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-c">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Ущелье Алибек</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-m">Взимается плата</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Самый популярный пеший маршрут Домбая — к леднику и водопаду. По пути проходите через альпийские луга, мемориал альпинистов и выходите к леднику Алибек.</div>
+        <div class="pc-info-row"><div class="pc-info-item">🥾 <span>Пешком / на авто (частично)</span></div><div class="pc-info-item">📅 <span>Май–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2500,41.7400','Ущелье Алибек')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-c">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Ущелье Домбай-Ульген</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-m">Взимается плата</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Ущелье под главной вершиной региона — Домбай-Ульгеном. Здесь проходит маршрут к Чучхурским водопадам и через Русскую поляну. Один из красивейших видовых коридоров курорта.</div>
+        <div class="pc-info-row"><div class="pc-info-item">🥾 <span>Пешком / на авто (частично)</span></div><div class="pc-info-item">📅 <span>Май–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2750,41.7200','Ущелье Домбай-Ульген")>
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-c">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Ущелье Псыш</div>
+            <div class="pc-tags"><span class="tag t-e">Пешком</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Живописное ущелье на пути из Домбая в Архыз. Соединяет два курорта через горные перевалы. Маршрут проходит через нетронутые альпийские луга и высокогорные озёра.</div>
+        <div class="pc-info-row"><div class="pc-info-item">🥾 <span>Пешком</span></div><div class="pc-info-item">📅 <span>Июль–сентябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2667,41.8333','Ущелье Псыш')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-c">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Ущелье Гоначхир</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-c">На авто</span><span class="tag t-m">Взимается плата</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Живописное ущелье вдоль Военно-Сухумской дороги. Здесь расположено Форельное озеро. Можно проехать на машине с множеством остановок для фото.</div>
+        <div class="pc-info-row"><div class="pc-info-item">🚗 <span>На авто</span></div><div class="pc-info-item">📅 <span>Круглый год</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.3500,41.7400','Ущелье Гоначхир')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-c">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Мухинское ущелье</div>
+            <div class="pc-tags"><span class="tag t-c">Джиппинг</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Ущелье для джиппинга и треккинга, ведущее к перевалу Муху. Красивые виды на гору Белая Папаха и Мухинское озеро (Шобайдак-Кёль). Популярный маршрут для джип-туров летом.</div>
+        <div class="pc-info-row"><div class="pc-info-item">🚙 <span>Джиппинг</span></div><div class="pc-info-item">📅 <span>Июнь–сентябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.3167,41.8000','Мухинское ущелье')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-c">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Перевал Гумбаши</div>
+            <div class="pc-tags"><span class="tag t-c">На авто</span><span class="tag t-e">Вид на Эльбрус</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Панорамная точка на пути из Кисловодска. Один из лучших видов на Эльбрус в регионе — особенно хорош на рассвете. Дорога занимает около 2 часов от Домбая.</div>
+        <div class="pc-info-row"><div class="pc-info-item">🚗 <span>На авто</span></div><div class="pc-info-item">📅 <span>Май–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.6667,42.1333','Перевал Гумбаши')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-c">🏔️</div>
+          <div class="pc-header">
+            <div class="pc-name">Перевал Кичи-Ауш</div>
+            <div class="pc-tags"><span class="tag t-e">Мухинское ущелье</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Живописный перевал с видом на Маркинские озёра. Открывает доступ к цепочке высокогорных озёр и даёт панорамные виды на окрестные хребты.</div>
+        <div class="pc-info-row"><div class="pc-info-item">🥾 <span>Пешком</span></div><div class="pc-info-item">📅 <span>Июль–сентябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2500,41.8500','Перевал Кичи-Ауш')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ЛЕДНИКИ -->
+<div class="cat-section" id="cat-glacier">
+  <div class="sec-h">🧊 Ледники</div>
+  <div class="places">
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-g">🧊</div>
+          <div class="pc-header">
+            <div class="pc-name">Алибекский ледник</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-e">Ущелье Алибек</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Один из самых доступных ледников Кавказа — дойти пешком за 2–3 часа. Ледник активно тает, поэтому будьте осторожны: не подходите близко к краю и избегайте зон с трещинами.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~7 км от посёлка</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2417,41.7500','Алибекский ледник')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-g">🧊</div>
+          <div class="pc-header">
+            <div class="pc-name">Ледник Суфруджу</div>
+            <div class="pc-tags"><span class="tag t-e">Ущелье Аманауз</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Ледник, питающий мощные Суфруджинские водопады. Виден издалека — его таяние создаёт один из красивейших водопадных каскадов региона.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📍 <span>~8 км от посёлка</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.2383,41.7583','Ледник Суфруджу')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ХРАМЫ -->
+<div class="cat-section" id="cat-church">
+  <div class="sec-h">⛪ Исторические объекты</div>
+  <div class="places">
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-ch">⛪</div>
+          <div class="pc-header">
+            <div class="pc-name">Шоанинский храм</div>
+            <div class="pc-tags"><span class="tag t-i">X век</span><span class="tag t-c">Аланский</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Древний аланский христианский храм X века на отвесной скале горы Шоана. Один из старейших христианских храмов России. Дорога к храму — крутой подъём с потрясающими видами.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📅 <span>Круглый год</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.7167,41.9000','Шоанинский храм')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-ch">⛪</div>
+          <div class="pc-header">
+            <div class="pc-name">Сентинский храм</div>
+            <div class="pc-tags"><span class="tag t-i">X век</span><span class="tag t-i">Фрески</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Византийский храм X века в окрестностях Теберды. Сохранились остатки уникальных древних фресок. Расположен на горе с видом на долину реки Теберды.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📅 <span>Круглый год</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.6333,41.7500','Сентинский храм')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-ch">🪨</div>
+          <div class="pc-header">
+            <div class="pc-name">Сырные пещеры</div>
+            <div class="pc-tags"><span class="tag t-c">Рядом с Шоаной</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Уникальные скальные образования из мягкого песчаника, похожие на пористый сыр с дырками. Природный феномен, которого больше нигде не встретишь. Находятся рядом с Шоанинским храмом.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📅 <span>Круглый год</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.7100,41.9050','Сырные пещеры')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-ch">💧</div>
+          <div class="pc-header">
+            <div class="pc-name">Джамагатские нарзаны</div>
+            <div class="pc-tags"><span class="tag t-e">Пешком</span><span class="tag t-e">Минеральная вода</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Природные источники минеральной воды прямо в ущелье. Вода бьёт из-под земли в «диком» виде — можно пить прямо из источника. Лёгкая прогулка от дороги.</div>
+        <div class="pc-info-row"><div class="pc-info-item">📅 <span>Май–октябрь</span></div></div>
+        <a class="pc-map-btn" onclick="openMap('43.3833,41.8333','Джамагатские нарзаны')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ДРУГОЕ -->
+<div class="cat-section" id="cat-other">
+  <div class="sec-h">✨ Интересные места</div>
+  <div class="places">
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-o">🛸</div>
+          <div class="pc-header">
+            <div class="pc-name">Гостиница «Тарелка»</div>
+            <div class="pc-tags"><span class="tag" style="background:#FF6B35;color:#fff;">🔥 ТОП</span><span class="tag t-e">В посёлке</span><span class="tag t-i">Архитектура</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Футуристичный объект в форме летающей тарелки НЛО на склоне горы Мусса-Ачитара. Подарок Финляндии советскому курорту в 1968 году. Один из самых фотографируемых объектов Домбая.</div>
+        <a class="pc-map-btn" onclick="openMap('43.2719,41.6950','Гостиница Тарелка')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-o">🦬</div>
+          <div class="pc-header">
+            <div class="pc-name">Музей природы и зубры</div>
+            <div class="pc-tags"><span class="tag t-e">Теберда</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Вольерный комплекс Тебердинского заповедника в Теберде. Здесь можно вблизи увидеть зубров — почти вымерших европейских бизонов, которых здесь восстанавливают. Подходит для детей.</div>
+        <a class="pc-map-btn" onclick="openMap('43.4500,41.7333','Музей природы Теберда')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-o">🪨</div>
+          <div class="pc-header">
+            <div class="pc-name">«Камень Высоцкого»</div>
+            <div class="pc-tags"><span class="tag t-e">Русская поляна</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Огромный валун на Русской поляне, где отдыхал и писал стихи Владимир Высоцкий во время своих приездов на Домбай. Место паломничества поклонников барда.</div>
+        <a class="pc-map-btn" onclick="openMap('43.2767,41.7283','Камень Высоцкого')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+    <div class="place-card">
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-icon ic-o">🦙</div>
+          <div class="pc-header">
+            <div class="pc-name">Ферма «Деревня альпак»</div>
+            <div class="pc-tags"><span class="tag t-e">В посёлке</span><span class="tag t-e">Для детей</span></div>
+          </div>
+        </div>
+        <div class="pc-desc">Новое место отдыха прямо в посёлке Домбай. Можно познакомиться с альпаками, покормить их и сфотографироваться. Отличный вариант для семей с детьми.</div>
+        <a class="pc-map-btn" onclick="openMap('43.2781,41.6917','Деревня альпак')">
+          <span class="pc-map-icon">📍</span>Открыть на карте
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer-pad"></div>
+
+<nav class="bottom-nav">
+  <div class="ni" onclick="goNav('home')"><span class="nico">🏠</span><span class="nlbl">Главная</span></div>
+  <div class="ni" onclick="goNav('hotels')"><span class="nico">🏨</span><span class="nlbl">Отели</span></div>
+  <div class="ni active"><span class="nico">🗺️</span><span class="nlbl">Гид</span></div>
+  <div class="ni" onclick="goNav('contacts')"><span class="nico">📞</span><span class="nlbl">Контакты</span></div>
+</nav>
+
+<script>
+try{const tg=window.Telegram.WebApp;tg.ready();tg.expand();tg.setHeaderColor('#071520');tg.BackButton.show();tg.BackButton.onClick(()=>{window.location.href='index.html';});}catch(e){}
+
+const cats=['mountain','lake','waterfall','canyon','glacier','church','other'];
+const topIds=['musa','alibek-water','baduk','alibek-glacier','devil','chuchkhur','tarel','turye','sufrugini'];
+
+function filter(cat,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+
+  if(cat==='top'){
+    // Показываем все секции но прячем карточки не из топа
+    cats.forEach(c=>document.getElementById('cat-'+c).classList.remove('hidden'));
+    document.querySelectorAll('.place-card').forEach(card=>{
+      card.style.display = topIds.includes(card.id) ? '' : 'none';
+    });
+    // Прячем пустые секции
+    cats.forEach(c=>{
+      const sec=document.getElementById('cat-'+c);
+      const visible=[...sec.querySelectorAll('.place-card')].some(el=>el.style.display!=='none');
+      sec.classList.toggle('hidden',!visible);
+    });
+  } else {
+    // Восстанавливаем все карточки
+    document.querySelectorAll('.place-card').forEach(card=>card.style.display='');
+    cats.forEach(c=>{
+      document.getElementById('cat-'+c).classList.toggle('hidden', cat!=='all' && cat!==c);
+    });
+  }
+  window.scrollTo(0,0);
+}
+
+function goNav(page){
+  const map={home:'index.html',hotels:'hotels.html',contacts:'index.html'};
+  window.location.href=map[page]||'index.html';
+}
+
+function openMap(coords,name){
+  const url='https://yandex.ru/maps/?pt='+coords.split(',').reverse().join(',')+'&z=15&l=map&text='+encodeURIComponent(name);
+  try{window.Telegram.WebApp.openLink(url);}
+  catch(e){window.open(url,'_blank');}
+}
+</script>
+</body>
+</html>
