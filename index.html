@@ -179,7 +179,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="status-bar">
         <div class="status-pill"><div class="sdot dg"></div>Курорт открыт</div>
         <div class="status-pill"><div class="sdot ds"></div>−3° · Снег</div>
-        <a class="status-pill" href="https://dombai-kd.ru/vebkamery/" target="_blank"><div class="sdot dw"></div>📷 Вебкамеры</a>
+        <a class="status-pill" href="webcams.html"><div class="sdot dw"></div>📷 Вебкамеры</a>
       </div>
       <div class="hero-phone">
         <a href="tel:+78787958006"><span class="ph-num">+7 (87879) 5-80-06</span> — Горячая линия курорта</a>
@@ -320,6 +320,7 @@ function goPage(id){
   if(id==='guide'){window.location.href='guide.html';return;}
   if(id==='excursions'){window.location.href='excursions.html';return;}
   if(id==='routes'){window.location.href='routes.html';return;}
+  if(id==='weather'){window.location.href='webcams.html';return;}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));

@@ -25,6 +25,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .filter-btn[data-f="easy"].active{background:#2E7D32;border-color:#2E7D32;}
 .filter-btn[data-f="medium"].active{background:#F57F17;border-color:#F57F17;}
 .filter-btn[data-f="hard"].active{background:#C62828;border-color:#C62828;}
+.filter-btn[data-f="top"].active{background:linear-gradient(135deg,#FF6B35,#E53935);border-color:#FF6B35;}
+.route-card.hidden-top{display:none;}
 
 .sec-h{padding:18px 14px 10px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
 
@@ -100,6 +102,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <div class="filter-wrap">
   <button class="filter-btn active" data-f="all" onclick="filter('all',this)">Все маршруты</button>
+  <button class="filter-btn" data-f="top" onclick="filter('top',this)">🔥 ТОП</button>
   <button class="filter-btn" data-f="easy" onclick="filter('easy',this)">🟢 Легко</button>
   <button class="filter-btn" data-f="medium" onclick="filter('medium',this)">🟡 Средне</button>
   <button class="filter-btn" data-f="hard" onclick="filter('hard',this)">🔴 Сложно</button>
@@ -152,6 +155,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="rc-warn">⚠️ Режим: 09:00-17:00, выход не позже 15:30. Опасный участок после моста - узкая тропа, мокрые камни. На смотровой площадке одновременно не более 4-5 человек. Билет оплачивается на КПП.
       <div style="margin-top:8px;padding:8px 10px;background:#E3F0FB;border-radius:8px;font-size:12px;color:#1565C0;line-height:1.4;">📞 Перед поездкой рекомендуем уточнить работу маршрута на горячей линии нацпарка: <strong>8 (87879) 5-12-61</strong></div>
+      </div>
     </div>
   </div>
 
@@ -196,6 +200,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="rc-warn">⚠️ Режим: 09:00-18:00, выход не позже 16:00. Билет оплачивается на КПП «Гоначхир». Пешком маршрут длинный - 24 км. Большинство туристов едут на машине.
       <div style="margin-top:8px;padding:8px 10px;background:#E3F0FB;border-radius:8px;font-size:12px;color:#1565C0;line-height:1.4;">📞 Перед поездкой рекомендуем уточнить работу маршрута на горячей линии нацпарка: <strong>8 (87879) 5-12-61</strong></div>
+      </div>
     </div>
   </div>
 
@@ -241,6 +246,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="rc-warn">⚠️ Режим: 09:00-18:00, выход не позже 16:00. Билет на КПП «Джамагат». В период паводка возможно пересечение ручьев вброд - будьте осторожны.
       <div style="margin-top:8px;padding:8px 10px;background:#E3F0FB;border-radius:8px;font-size:12px;color:#1565C0;line-height:1.4;">📞 Перед поездкой рекомендуем уточнить работу маршрута на горячей линии нацпарка: <strong>8 (87879) 5-12-61</strong></div>
+      </div>
     </div>
   </div>
 
@@ -284,6 +290,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="rc-warn">💡 Режим: 09:00-18:00, выход не позже 16:00. Только билет на КПП (паспорт не нужен). Асфальт и плитка на всём маршруте. Подходит для детей всех возрастов и пожилых.
       <div style="margin-top:8px;padding:8px 10px;background:#E3F0FB;border-radius:8px;font-size:12px;color:#1565C0;line-height:1.4;">📞 Перед поездкой рекомендуем уточнить работу маршрута на горячей линии нацпарка: <strong>8 (87879) 5-12-61</strong></div>
+      </div>
     </div>
   </div>
 
@@ -338,6 +345,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="rc-warn">⚠️ Режим: 09:00-17:00. Выход пешком не позже 12:00, на авто не позже 15:00. На КПП нужен паспорт РФ для «Турпродукта». Опасные места: окрестности водопада (камнепад), берега рек (скользкие камни).
       <div style="margin-top:8px;padding:8px 10px;background:#E3F0FB;border-radius:8px;font-size:12px;color:#1565C0;line-height:1.4;">📞 Перед поездкой рекомендуем уточнить работу маршрута на горячей линии нацпарка: <strong>8 (87879) 5-12-61</strong></div>
+      </div>
     </div>
   </div>
 
@@ -383,6 +391,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="rc-warn">⚠️ Режим: 09:00-17:00, выход не позже 15:00. На КПП нужен оригинал паспорта РФ для «Турпродукта». Опасные места: смотровая у Чёртовой мельницы (скользкие камни), окрестности водопадов (риск камнепада).
       <div style="margin-top:8px;padding:8px 10px;background:#E3F0FB;border-radius:8px;font-size:12px;color:#1565C0;line-height:1.4;">📞 Перед поездкой рекомендуем уточнить работу маршрута на горячей линии нацпарка: <strong>8 (87879) 5-12-61</strong></div>
+      </div>
     </div>
   </div>
 
@@ -430,6 +439,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="rc-warn">⚠️ Режим работы: 09:00-18:00, выходить не позже 12:00. Билет оплачивается на КПП. Связь Мегафон ~60%. Дети до 6 лет - недоступно, до 17 лет только с родителями.
       <div style="margin-top:8px;padding:8px 10px;background:#E3F0FB;border-radius:8px;font-size:12px;color:#1565C0;line-height:1.4;">📞 Перед поездкой рекомендуем уточнить работу маршрута на горячей линии нацпарка: <strong>8 (87879) 5-12-61</strong></div>
+      </div>
     </div>
   </div>
 
@@ -481,6 +491,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="rc-warn">⚠️ Режим: 09:00-17:00, выход не позже 12:00. На КПП нужен паспорт РФ для «Турпродукта». Связь Мегафон/МТС только 60%. Опасные места: крутые подъёмы к водопадам, берега рек.
       <div style="margin-top:8px;padding:8px 10px;background:#E3F0FB;border-radius:8px;font-size:12px;color:#1565C0;line-height:1.4;">📞 Перед поездкой рекомендуем уточнить работу маршрута на горячей линии нацпарка: <strong>8 (87879) 5-12-61</strong></div>
+      </div>
     </div>
   </div>
 
@@ -529,6 +540,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="rc-warn">⚠️ Режим: 09:00-18:00, выход не позже 13:00. Только билет на КПП (паспорт не нужен). Связь Мегафон только 40% — одно из самых слабых покрытий. На курумнике в дождь камни крайне скользкие — остановитесь или двигайтесь с максимальной осторожностью.
       <div style="margin-top:8px;padding:8px 10px;background:#E3F0FB;border-radius:8px;font-size:12px;color:#1565C0;line-height:1.4;">📞 Перед поездкой рекомендуем уточнить работу маршрута на горячей линии нацпарка: <strong>8 (87879) 5-12-61</strong></div>
+      </div>
     </div>
   </div>
 
@@ -582,6 +594,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
       <div class="rc-warn">⚠️ Режим: 09:00-17:00, выход не позже 12:00. Только билет на КПП «Алибек» (паспорт не нужен). Маршрут не рекомендован пенсионерам старше 65 лет. Опасно: окрестности обрывов у обзорной точки.
       <div style="margin-top:8px;padding:8px 10px;background:#E3F0FB;border-radius:8px;font-size:12px;color:#1565C0;line-height:1.4;">📞 Перед поездкой рекомендуем уточнить работу маршрута на горячей линии нацпарка: <strong>8 (87879) 5-12-61</strong></div>
+      </div>
     </div>
   </div>
 
@@ -593,8 +606,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <div style="margin:14px 14px 0;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 16px rgba(13,31,45,.06);">
   <div style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">📞 Полезные контакты</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-    <div style="display:flex;flex-direction:column;gap:10px;">
+  <div style="display:flex;flex-direction:column;gap:10px;">
       <a href="tel:+78787951261" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
         <span style="font-size:18px;">🏔️</span>
         <div><div style="font-size:12px;font-weight:600;color:var(--text);">Тебердинский нацпарк</div><div style="font-size:11px;color:var(--sky2);">8 (87879) 5-12-61</div></div>
@@ -607,8 +619,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <span style="font-size:18px;">🚁</span>
         <div><div style="font-size:12px;font-weight:600;color:var(--text);">МЧС (мобильный)</div><div style="font-size:11px;color:var(--sky2);">8 (928) 386-51-32</div></div>
       </a>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:10px;">
       <a href="tel:+78787925093" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
         <span style="font-size:18px;">🛂</span>
         <div><div style="font-size:12px;font-weight:600;color:var(--text);">Пограничная служба</div><div style="font-size:11px;color:var(--sky2);">8 (87879) 2-50-93</div></div>
@@ -617,7 +627,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <span style="font-size:18px;">ℹ️</span>
         <div><div style="font-size:12px;font-weight:600;color:var(--text);">Инфоцентр Домбая</div><div style="font-size:11px;color:var(--sky2);">8 (928) 659-01-23</div></div>
       </a>
-    </div>
   </div>
 </div>
 
@@ -647,9 +656,27 @@ const cats=['easy','medium','hard'];
 function filter(cat,btn){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  cats.forEach(c=>{
-    document.getElementById('cat-'+c).classList.toggle('hidden', cat!=='all' && cat!==c);
-  });
+
+  if(cat==='top'){
+    // Показываем все секции, но скрываем карточки без тега ТОП
+    cats.forEach(c=>document.getElementById('cat-'+c).classList.remove('hidden'));
+    document.querySelectorAll('.route-card').forEach(card=>{
+      const hasTop = card.querySelector('.tag.t-top');
+      card.classList.toggle('hidden-top', !hasTop);
+    });
+    // Скрываем секции, где все карточки скрыты
+    cats.forEach(c=>{
+      const sec = document.getElementById('cat-'+c);
+      const visible = sec.querySelectorAll('.route-card:not(.hidden-top)').length;
+      sec.classList.toggle('hidden', visible===0);
+    });
+  } else {
+    // Сбрасываем ТОП-скрытие
+    document.querySelectorAll('.route-card').forEach(card=>card.classList.remove('hidden-top'));
+    cats.forEach(c=>{
+      document.getElementById('cat-'+c).classList.toggle('hidden', cat!=='all' && cat!==c);
+    });
+  }
   window.scrollTo(0,0);
 }
 
