@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Вебкамеры — Домбай</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#4DC8E8;--sky2:#2AAFD0;--text:#0D1F2A;--muted:#607080;--bg:#EEF6FA;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(160deg,#071520 0%,#0D2A50 45%,#0D3A60 75%,#0F5070 100%);padding:28px 20px 24px;position:relative;overflow:hidden;}
+.hero-stars{position:absolute;top:0;left:0;right:0;height:100%;background-image:radial-gradient(1px 1px at 10% 20%,rgba(255,255,255,.9) 0%,transparent 100%),radial-gradient(1px 1px at 30% 8%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 70% 15%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 85% 5%,rgba(255,255,255,.5) 0%,transparent 100%),radial-gradient(1px 1px at 55% 28%,rgba(255,255,255,.6) 0%,transparent 100%),radial-gradient(1px 1px at 18% 38%,rgba(255,255,255,.45) 0%,transparent 100%);}
+.hero-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:6px;position:relative;z-index:1;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.55);position:relative;z-index:1;line-height:1.5;}
+.hero-live{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:600;color:rgba(255,255,255,.85);position:relative;z-index:1;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#FF4040;box-shadow:0 0 6px #FF4040;animation:blink 1.4s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+
+/* ── FILTER ── */
+.filter-wrap{padding:14px 14px 0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;}
+.filter-wrap::-webkit-scrollbar{display:none;}
+.filter-btn{flex-shrink:0;padding:7px 16px;border-radius:999px;border:1.5px solid rgba(42,175,208,.3);background:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.filter-btn.active{background:var(--sky2);border-color:var(--sky2);color:#fff;}
+
+/* ── SECTION HEADER ── */
+.sec-h{padding:18px 14px 10px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+
+/* ── CAMERA CARDS ── */
+.cams{padding:0 14px;display:flex;flex-direction:column;gap:10px;}
+.cam-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(13,31,45,.06);}
+.cam-card.hidden{display:none;}
+
+.cc-body{padding:14px 16px 12px;}
+.cc-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;}
+.cc-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ic-sky{background:#E3F6FC;}
+.ic-green{background:#E8F5E9;}
+.ic-purple{background:#F3E5F5;}
+
+.cc-header{flex:1;}
+.cc-name{font-family:'Montserrat',sans-serif;font-size:15px;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:4px;}
+.cc-tags{display:flex;gap:5px;flex-wrap:wrap;}
+.tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:999px;}
+.t-sky{background:#E3F6FC;color:#0D7A9E;}
+.t-green{background:#E8F5E9;color:#2E7D32;}
+.t-purple{background:#F3E5F5;color:#6A1B9A;}
+.t-live{background:#FFEBEE;color:#C62828;}
+
+.cc-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:10px;}
+
+.cc-info-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;padding:8px 0;border-top:1px solid rgba(0,0,0,.05);}
+.cc-info-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);}
+.cc-info-item span{font-weight:600;color:var(--text);}
+
+/* ── КНОПКИ ── */
+.cc-btns{display:flex;gap:8px;}
+.cc-watch-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;background:#F0F8FF;border-radius:10px;font-size:12px;font-weight:600;color:var(--sky2);border:1px solid rgba(42,175,208,.2);cursor:pointer;transition:background .15s;}
+.cc-watch-btn:active{background:#DCF0FA;}
+.cc-watch-btn.open{background:#E3F6FC;color:#0D7A9E;}
+.cc-full-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;background:#F5F5F5;border-radius:10px;font-size:12px;font-weight:600;color:var(--text);border:none;text-decoration:none;cursor:pointer;white-space:nowrap;}
+.cc-full-btn:active{background:#E8E8E8;}
+
+/* ── ВИДЕО-БЛОК ── */
+.cc-video{display:none;border-top:1px solid rgba(0,0,0,.06);background:#050F18;}
+.cc-video.open{display:block;}
+.iframe-wrap{position:relative;width:100%;padding-bottom:56.25%;}
+.iframe-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
+.iframe-wrap .loader{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+.loader-spin{width:28px;height:28px;border:3px solid rgba(77,200,232,.2);border-top-color:var(--sky);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loader-txt{font-size:11px;color:rgba(255,255,255,.4);}
+.cc-video-footer{padding:6px 14px 10px;display:flex;align-items:center;justify-content:space-between;background:#050F18;}
+.cc-src{font-size:10px;color:rgba(255,255,255,.2);}
+.cc-open-link{font-size:11px;font-weight:600;color:var(--sky);text-decoration:none;}
+.cc-open-link:active{opacity:.7;}
+
+/* ── TIP BLOCK ── */
+.tip-block{margin:14px 14px 0;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 16px rgba(13,31,45,.06);}
+.tip-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.tip-item{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px;color:var(--text);line-height:1.45;}
+.tip-item:last-child{border-bottom:none;}
+.tip-dot{width:6px;height:6px;border-radius:50%;background:var(--sky2);flex-shrink:0;margin-top:5px;}
+
+/* ── FOOTER / NAV ── */
+.footer-pad{height:80px;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid rgba(77,200,232,.12);display:flex;padding:6px 0 14px;box-shadow:0 -4px 24px rgba(13,31,45,.09);z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;}
+.ni:active{opacity:.6;}
+.nico{font-size:20px;}
+.nlbl{font-size:10px;font-weight:600;color:#607080;}
+.ni.active .nlbl{color:#2AAFD0;}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-stars"></div>
+  <div class="hero-title">📷 Вебкамеры</div>
+  <div class="hero-sub">Прямые трансляции с курорта Домбай</div>
+  <div class="hero-live"><span class="live-dot"></span> 5 камер онлайн</div>
+</div>
+
+<!-- FILTER -->
+<div class="filter-wrap">
+  <button class="filter-btn active" data-f="all"     onclick="filterCams('all',this)">Все камеры</button>
+  <button class="filter-btn"        data-f="slope"   onclick="filterCams('slope',this)">🎿 Склоны</button>
+  <button class="filter-btn"        data-f="village" onclick="filterCams('village',this)">🏘️ Посёлок</button>
+</div>
+
+<!-- CAMERAS -->
+<div class="sec-h">📡 Камеры курорта</div>
+<div class="cams" id="cams">
+
+  <!-- Камера 1 -->
+  <div class="cam-card" data-tag="slope">
+    <div class="cc-body">
+      <div class="cc-top">
+        <div class="cc-icon ic-sky">🎿</div>
+        <div class="cc-header">
+          <div class="cc-name">Горнолыжный склон</div>
+          <div class="cc-tags">
+            <span class="tag t-live">🔴 LIVE</span>
+            <span class="tag t-sky">Склоны</span>
+          </div>
+        </div>
+      </div>
+      <div class="cc-desc">Вид на основные трассы горнолыжного курорта. Позволяет оценить загруженность склонов и состояние снежного покрова.</div>
+      <div class="cc-info-row">
+        <div class="cc-info-item">📍 <span>Гора Мусса-Ачитара</span></div>
+        <div class="cc-info-item">🕐 <span>Круглосуточно</span></div>
+      </div>
+      <div class="cc-btns">
+        <button class="cc-watch-btn" onclick="toggleCam(this,1)">▶ Смотреть</button>
+        <a class="cc-full-btn" href="https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:65536/" target="_blank">⤢ Полный экран</a>
+      </div>
+    </div>
+    <div class="cc-video" id="cam-1">
+      <div class="iframe-wrap" id="wrap-1">
+        <div class="loader"><div class="loader-spin"></div><div class="loader-txt">Подключение…</div></div>
+      </div>
+      <div class="cc-video-footer">
+        <span class="cc-src">Powered by Ivideon</span>
+        <a class="cc-open-link" href="https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:65536/" target="_blank">Открыть в браузере ›</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Камера 2 -->
+  <div class="cam-card" data-tag="slope">
+    <div class="cc-body">
+      <div class="cc-top">
+        <div class="cc-icon ic-sky">⛷️</div>
+        <div class="cc-header">
+          <div class="cc-name">Верхняя зона подъёмников</div>
+          <div class="cc-tags">
+            <span class="tag t-live">🔴 LIVE</span>
+            <span class="tag t-sky">Склоны</span>
+          </div>
+        </div>
+      </div>
+      <div class="cc-desc">Панорама верхней зоны канатной дороги. Видно состояние подъёмников и верхних трасс курорта.</div>
+      <div class="cc-info-row">
+        <div class="cc-info-item">📍 <span>Верхняя станция</span></div>
+        <div class="cc-info-item">🕐 <span>Круглосуточно</span></div>
+      </div>
+      <div class="cc-btns">
+        <button class="cc-watch-btn" onclick="toggleCam(this,2)">▶ Смотреть</button>
+        <a class="cc-full-btn" href="https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:196608/" target="_blank">⤢ Полный экран</a>
+      </div>
+    </div>
+    <div class="cc-video" id="cam-2">
+      <div class="iframe-wrap" id="wrap-2">
+        <div class="loader"><div class="loader-spin"></div><div class="loader-txt">Подключение…</div></div>
+      </div>
+      <div class="cc-video-footer">
+        <span class="cc-src">Powered by Ivideon</span>
+        <a class="cc-open-link" href="https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:196608/" target="_blank">Открыть в браузере ›</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Камера 3 -->
+  <div class="cam-card" data-tag="slope">
+    <div class="cc-body">
+      <div class="cc-top">
+        <div class="cc-icon ic-sky">🏔️</div>
+        <div class="cc-header">
+          <div class="cc-name">Средняя зона трасс</div>
+          <div class="cc-tags">
+            <span class="tag t-live">🔴 LIVE</span>
+            <span class="tag t-sky">Склоны</span>
+          </div>
+        </div>
+      </div>
+      <div class="cc-desc">Камера снимает трассы средней части горы. Хорошо видны основные спуски и промежуточные станции подъёмника.</div>
+      <div class="cc-info-row">
+        <div class="cc-info-item">📍 <span>Средняя станция</span></div>
+        <div class="cc-info-item">🕐 <span>Круглосуточно</span></div>
+      </div>
+      <div class="cc-btns">
+        <button class="cc-watch-btn" onclick="toggleCam(this,3)">▶ Смотреть</button>
+        <a class="cc-full-btn" href="https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:131072/" target="_blank">⤢ Полный экран</a>
+      </div>
+    </div>
+    <div class="cc-video" id="cam-3">
+      <div class="iframe-wrap" id="wrap-3">
+        <div class="loader"><div class="loader-spin"></div><div class="loader-txt">Подключение…</div></div>
+      </div>
+      <div class="cc-video-footer">
+        <span class="cc-src">Powered by Ivideon</span>
+        <a class="cc-open-link" href="https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:131072/" target="_blank">Открыть в браузере ›</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Камера 4 -->
+  <div class="cam-card" data-tag="village">
+    <div class="cc-body">
+      <div class="cc-top">
+        <div class="cc-icon ic-green">🌲</div>
+        <div class="cc-header">
+          <div class="cc-name">Центр посёлка Домбай</div>
+          <div class="cc-tags">
+            <span class="tag t-live">🔴 LIVE</span>
+            <span class="tag t-green">Посёлок</span>
+          </div>
+        </div>
+      </div>
+      <div class="cc-desc">Главная улица курортного посёлка. Позволяет оценить погоду внизу, активность в посёлке и дорожную обстановку.</div>
+      <div class="cc-info-row">
+        <div class="cc-info-item">📍 <span>Ул. Карачаевская</span></div>
+        <div class="cc-info-item">🕐 <span>Круглосуточно</span></div>
+      </div>
+      <div class="cc-btns">
+        <button class="cc-watch-btn" onclick="toggleCam(this,4)">▶ Смотреть</button>
+        <a class="cc-full-btn" href="https://open.ivideon.com/embed/v3/100-sHbH0FLLQUyeHcAyAVS22l:0/" target="_blank">⤢ Полный экран</a>
+      </div>
+    </div>
+    <div class="cc-video" id="cam-4">
+      <div class="iframe-wrap" id="wrap-4">
+        <div class="loader"><div class="loader-spin"></div><div class="loader-txt">Подключение…</div></div>
+      </div>
+      <div class="cc-video-footer">
+        <span class="cc-src">Powered by Ivideon</span>
+        <a class="cc-open-link" href="https://open.ivideon.com/embed/v3/100-sHbH0FLLQUyeHcAyAVS22l:0/" target="_blank">Открыть в браузере ›</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Камера 5 -->
+  <div class="cam-card" data-tag="village">
+    <div class="cc-body">
+      <div class="cc-top">
+        <div class="cc-icon ic-purple">🌄</div>
+        <div class="cc-header">
+          <div class="cc-name">Панорама долины</div>
+          <div class="cc-tags">
+            <span class="tag t-live">🔴 LIVE</span>
+            <span class="tag t-purple">Панорама</span>
+          </div>
+        </div>
+      </div>
+      <div class="cc-desc">Широкий обзор на горную долину и вершины Домбая. Отличная точка для оценки видимости и общей погодной обстановки.</div>
+      <div class="cc-info-row">
+        <div class="cc-info-item">📍 <span>Домбайская долина</span></div>
+        <div class="cc-info-item">🕐 <span>Круглосуточно</span></div>
+      </div>
+      <div class="cc-btns">
+        <button class="cc-watch-btn" onclick="toggleCam(this,5)">▶ Смотреть</button>
+        <a class="cc-full-btn" href="https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:0/" target="_blank">⤢ Полный экран</a>
+      </div>
+    </div>
+    <div class="cc-video" id="cam-5">
+      <div class="iframe-wrap" id="wrap-5">
+        <div class="loader"><div class="loader-spin"></div><div class="loader-txt">Подключение…</div></div>
+      </div>
+      <div class="cc-video-footer">
+        <span class="cc-src">Powered by Ivideon</span>
+        <a class="cc-open-link" href="https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:0/" target="_blank">Открыть в браузере ›</a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /cams -->
+
+<!-- TIP BLOCK -->
+<div class="tip-block">
+  <div class="tip-title">Как пользоваться камерами</div>
+  <div class="tip-item"><div class="tip-dot"></div>Нажмите «Смотреть» - видео откроется прямо на странице</div>
+  <div class="tip-item"><div class="tip-dot"></div>«Полный экран» - открыть камеру в браузере</div>
+  <div class="tip-item"><div class="tip-dot"></div>Камеры работают круглосуточно</div>
+  <div class="tip-item"><div class="tip-dot"></div>Ночью - инфракрасный режим</div>
+  <div class="tip-item"><div class="tip-dot"></div>При плохой погоде видимость может быть ограничена</div>
+</div>
+
+<!-- DISCLAIMER -->
+<div style="margin:10px 14px 0;padding:10px 2px;">
+  <div style="font-size:11px;color:#A0AEB8;line-height:1.55;">Камеры предоставлены сторонним сервисом Ivideon. Мы не влияем на их работоспособность и не можем её гарантировать. Если камера не загружается — попробуйте позже или откройте трансляцию через кнопку «Полный экран».</div>
+</div>
+
+<div class="footer-pad"></div>
+
+<nav class="bottom-nav">
+  <div class="ni" onclick="goNav('home')"><span class="nico">🏠</span><span class="nlbl">Главная</span></div>
+  <div class="ni" onclick="goNav('hotels')"><span class="nico">🏨</span><span class="nlbl">Отели</span></div>
+  <div class="ni" onclick="goNav('routes')"><span class="nico">🥾</span><span class="nlbl">Маршруты</span></div>
+  <div class="ni active"><span class="nico">📷</span><span class="nlbl">Камеры</span></div>
+</nav>
+
+<script src="https://open.ivideon.com/embed/v3/embedded.js"></script>
+<script>
+try{
+  const tg = window.Telegram.WebApp;
+  tg.ready(); tg.expand(); tg.setHeaderColor('#071520');
+  tg.BackButton.show();
+  tg.BackButton.onClick(() => { window.location.href = 'index.html'; });
+}catch(e){}
+
+const CAM_SRC = {
+  1: 'https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:65536/',
+  2: 'https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:196608/',
+  3: 'https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:131072/',
+  4: 'https://open.ivideon.com/embed/v3/100-sHbH0FLLQUyeHcAyAVS22l:0/',
+  5: 'https://open.ivideon.com/embed/v3/100-h4V20DXJewrLRFXpabLpQQ:0/'
+};
+
+const loaded = new Set();
+
+function toggleCam(btn, idx) {
+  const card  = btn.closest('.cam-card');
+  const video = document.getElementById('cam-' + idx);
+  const isOpen = video.classList.contains('open');
+
+  // Закрыть все открытые
+  document.querySelectorAll('.cc-video.open').forEach(v => v.classList.remove('open'));
+  document.querySelectorAll('.cc-watch-btn.open').forEach(b => {
+    b.classList.remove('open');
+    b.textContent = '▶ Смотреть';
+  });
+
+  if (!isOpen) {
+    video.classList.add('open');
+    btn.classList.add('open');
+    btn.textContent = '■ Свернуть';
+    lazyLoad(idx);
+    setTimeout(() => card.scrollIntoView({behavior:'smooth', block:'nearest'}), 80);
+  }
+}
+
+function lazyLoad(idx) {
+  if (loaded.has(idx)) return;
+  loaded.add(idx);
+  const wrap   = document.getElementById('wrap-' + idx);
+  const loader = wrap.querySelector('.loader');
+  const iframe = document.createElement('iframe');
+  iframe.src   = CAM_SRC[idx];
+  iframe.allow = 'autoplay; fullscreen; clipboard-write; picture-in-picture';
+  iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
+  iframe.onload = () => { if(loader) loader.style.display = 'none'; };
+  wrap.appendChild(iframe);
+}
+
+function filterCams(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cards = document.querySelectorAll('.cam-card');
+  cards.forEach((card, i) => {
+    const match = tag === 'all' || card.dataset.tag === tag;
+    card.classList.toggle('hidden', !match);
+    if (!match) {
+      const v = document.getElementById('cam-' + (i+1));
+      const wb = card.querySelector('.cc-watch-btn');
+      if (v) v.classList.remove('open');
+      if (wb) { wb.classList.remove('open'); wb.textContent = '▶ Смотреть'; }
+    }
+  });
+  window.scrollTo(0, 0);
+}
+
+function goNav(page) {
+  const map = {home:'index.html', hotels:'hotels.html', routes:'routes.html'};
+  window.location.href = map[page] || 'index.html';
+}
+</script>
+</body>
+</html>
