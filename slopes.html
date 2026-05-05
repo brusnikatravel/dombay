@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Трассы и подъёмники — Домбай</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#4DC8E8;--sky2:#2AAFD0;--text:#0D1F2A;--muted:#607080;--bg:#EEF6FA;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.hero{background:linear-gradient(160deg,#071520 0%,#0D3050 45%,#0D2A40 70%,#102840 100%);padding:28px 20px 24px;position:relative;overflow:hidden;}
+.hero-stars{position:absolute;top:0;left:0;right:0;height:100%;background-image:radial-gradient(1px 1px at 10% 20%,rgba(255,255,255,.9) 0%,transparent 100%),radial-gradient(1px 1px at 30% 8%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 70% 15%,rgba(255,255,255,.8) 0%,transparent 100%),radial-gradient(1px 1px at 85% 5%,rgba(255,255,255,.5) 0%,transparent 100%);}
+.hero-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:6px;position:relative;z-index:1;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.55);position:relative;z-index:1;line-height:1.5;}
+.hero-stats{display:flex;gap:8px;margin-top:12px;position:relative;z-index:1;flex-wrap:wrap;}
+.hero-stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:4px 12px;font-size:11px;font-weight:600;color:rgba(255,255,255,.85);}
+.site-banner{margin:14px 14px 0;background:linear-gradient(135deg,#1565C0,#2AAFD0);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:opacity .15s;}
+.site-banner:active{opacity:.85;}
+.sb-icon{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.sb-t{flex:1;}
+.sb-title{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;}
+.sb-sub{font-size:12px;color:rgba(255,255,255,.7);}
+.sb-arr{font-size:20px;color:rgba(255,255,255,.5);}
+.sec-h{padding:18px 14px 10px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
+.update-bar{margin:10px 14px 0;background:#fff;border-radius:12px;padding:10px 14px;box-shadow:0 2px 12px rgba(13,31,45,.06);display:flex;align-items:center;gap:10px;}
+.ub-icon{font-size:16px;}
+.ub-text{font-size:12px;color:var(--muted);line-height:1.4;}
+.ub-time{font-weight:600;color:var(--text);}
+.ub-manual{font-size:10px;color:#A0AEB8;margin-top:1px;}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:700;}
+.st-open{background:#E8F5E9;color:#2E7D32;}
+.st-closed{background:#FFEBEE;color:#C62828;}
+.st-loading{background:#F5F5F5;color:#999;}
+.st-dot{width:6px;height:6px;border-radius:50%;}
+.st-open .st-dot{background:#2E7D32;}
+.st-closed .st-dot{background:#C62828;}
+.lift-cards{padding:0 14px;display:flex;flex-direction:column;gap:12px;}
+.lift-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 14px rgba(13,31,45,.07);}
+.lift-header{padding:16px 16px 0;display:flex;align-items:flex-start;gap:12px;}
+.lift-num{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;color:#fff;flex-shrink:0;}
+.ln-1{background:linear-gradient(135deg,#1565C0,#2AAFD0);}
+.ln-2{background:linear-gradient(135deg,#7B1FA2,#CE93D8);}
+.ln-3{background:linear-gradient(135deg,#BF360C,#FF8A65);}
+.lift-info{flex:1;}
+.lift-name{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:900;color:var(--text);line-height:1.1;margin-bottom:4px;}
+.lift-type{font-size:12px;color:var(--muted);font-weight:500;}
+.lift-heights{margin:12px 16px 0;background:#F0F8FF;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.lh-alt{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:800;color:var(--text);line-height:1;}
+.lh-label{font-size:10px;color:var(--muted);margin-top:2px;text-align:center;}
+.lh-arrow{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.lh-line{width:100%;height:3px;background:linear-gradient(90deg,var(--sky2),#7B1FA2);border-radius:2px;position:relative;}
+.lh-line::after{content:'›';position:absolute;right:-4px;top:-7px;font-size:16px;color:#7B1FA2;}
+.lh-meta{font-size:10px;color:var(--muted);text-align:center;}
+.lift-params{display:flex;gap:0;margin:10px 16px 0;border:1px solid rgba(0,0,0,.06);border-radius:10px;overflow:hidden;}
+.lp-item{flex:1;padding:8px 6px;text-align:center;border-right:1px solid rgba(0,0,0,.06);}
+.lp-item:last-child{border-right:none;}
+.lp-val{font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--text);line-height:1;}
+.lp-label{font-size:10px;color:var(--muted);margin-top:2px;}
+.lift-slopes-title{padding:12px 16px 6px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;border-top:1px solid rgba(0,0,0,.05);margin-top:12px;}
+.slope-row{display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid rgba(0,0,0,.04);transition:opacity .3s;}
+.slope-row:last-child{border-bottom:none;padding-bottom:14px;}
+.sr-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.sn-green{background:#2E7D32;color:#fff;}
+.sn-blue{background:#1565C0;color:#fff;}
+.sn-red{background:#C62828;color:#fff;}
+.sn-black{background:#1A1A1A;color:#fff;}
+.sr-info{flex:1;}
+.sr-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.2;}
+.sr-len{font-size:11px;color:var(--muted);margin-top:1px;}
+.schedule-block{margin:0 14px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(13,31,45,.06);}
+.schedule-row{padding:11px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px;}
+.schedule-row:last-child{border-bottom:none;}
+.sr-label-t{color:var(--muted);}
+.sr-val-t{font-weight:600;color:var(--text);}
+.tip-block{margin:14px 14px 0;background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 2px 16px rgba(13,31,45,.06);}
+.tip-title{font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.tip-item{display:flex;align-items:flex-start;gap:10px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px;color:var(--text);line-height:1.45;}
+.tip-item:last-child{border-bottom:none;}
+.tip-dot{width:6px;height:6px;border-radius:50%;background:var(--sky2);flex-shrink:0;margin-top:5px;}
+.footer-pad{height:80px;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid rgba(77,200,232,.12);display:flex;padding:6px 0 14px;box-shadow:0 -4px 24px rgba(13,31,45,.09);z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;}
+.ni:active{opacity:.6;}
+.nico{font-size:20px;}
+.nlbl{font-size:10px;font-weight:600;color:#607080;}
+.ni.active .nlbl{color:#2AAFD0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-stars"></div>
+  <div class="hero-title">⛷️ Трассы и подъёмники</div>
+  <div class="hero-sub">Гора Мусса-Ачитара · Домбай</div>
+  <div class="hero-stats">
+    <div class="hero-stat">⛰️ 1590 – 3168 м</div>
+    <div class="hero-stat">🎿 10 трасс</div>
+    <div class="hero-stat">🚡 3 подъёмника</div>
+  </div>
+</div>
+
+<!-- ПЛАШКА ОБНОВЛЕНИЯ -->
+<div class="update-bar" id="update-bar" style="display:none;">
+  <div class="ub-icon">🕐</div>
+  <div>
+    <div class="ub-text">Данные актуальны на <span class="ub-time" id="update-time">—</span></div>
+    <div class="ub-manual">Обновляются вручную</div>
+  </div>
+</div>
+
+<!-- БАННЕР -->
+<div class="site-banner" onclick="openLink('https://dombai-kd.ru/kanatnye-dorogi-dombaya/')">
+  <div class="sb-icon">📡</div>
+  <div class="sb-t">
+    <div class="sb-title">Актуальная информация о работе трасс</div>
+    <div class="sb-sub">Статус подъёмников и трасс на официальном сайте курорта</div>
+  </div>
+  <div class="sb-arr">›</div>
+</div>
+
+<!-- ПОДЪЁМНИКИ И ТРАССЫ -->
+<div class="sec-h">🚡 Подъёмники и их трассы</div>
+<div class="lift-cards">
+
+  <!-- ДОМБАЙ-1 -->
+  <div class="lift-card" data-id="lift-1">
+    <div class="lift-header">
+      <div class="lift-num ln-1">1</div>
+      <div class="lift-info">
+        <div class="lift-name">Домбай-1 <span class="status-badge st-loading" id="badge-lift-1"><span class="st-dot"></span> Загрузка</span></div>
+        <div class="lift-type">Гондольная КД · 8-местные кабины · Работает круглый год</div>
+      </div>
+    </div>
+    <div class="lift-heights">
+      <div><div class="lh-alt">1590 м</div><div class="lh-label">Старт</div></div>
+      <div class="lh-arrow"><div class="lh-line"></div><div class="lh-meta">6-10 мин · 687 м перепад</div></div>
+      <div><div class="lh-alt">2277 м</div><div class="lh-label">Финиш</div></div>
+    </div>
+    <div class="lift-params">
+      <div class="lp-item"><div class="lp-val">8</div><div class="lp-label">мест</div></div>
+      <div class="lp-item"><div class="lp-val">6-10 мин</div><div class="lp-label">в пути</div></div>
+      <div class="lp-item"><div class="lp-val">09:00</div><div class="lp-label">открытие</div></div>
+      <div class="lp-item"><div class="lp-val">16:30</div><div class="lp-label">закрытие</div></div>
+    </div>
+    <div class="lift-slopes-title">🎿 Трассы с этого подъёмника (3)</div>
+    <div class="slope-row" data-slope="slope-8"><div class="sr-num sn-blue">8</div><div class="sr-info"><div class="sr-name">Лесная</div><div class="sr-len">3140 м · Длинный живописный спуск через хвойный лес до посёлка</div></div></div>
+    <div class="slope-row" data-slope="slope-9"><div class="sr-num sn-green">9</div><div class="sr-info"><div class="sr-name">Учебный склон</div><div class="sr-len">940 м · Пологий склон для начинающих и детей</div></div></div>
+    <div class="slope-row" data-slope="slope-10"><div class="sr-num sn-green">10</div><div class="sr-info"><div class="sr-name">Поляна Лии</div><div class="sr-len">Спуск к живописной поляне с видом на Домбайскую долину</div></div></div>
+  </div>
+
+  <!-- ДОМБАЙ-2 -->
+  <div class="lift-card" data-id="lift-2">
+    <div class="lift-header">
+      <div class="lift-num ln-2">2</div>
+      <div class="lift-info">
+        <div class="lift-name">Домбай-2 <span class="status-badge st-loading" id="badge-lift-2"><span class="st-dot"></span> Загрузка</span></div>
+        <div class="lift-type">Шестикресельная КД · Кресла с куполом · Основная зона катания</div>
+      </div>
+    </div>
+    <div class="lift-heights">
+      <div><div class="lh-alt">2277 м</div><div class="lh-label">Старт</div></div>
+      <div class="lh-arrow"><div class="lh-line"></div><div class="lh-meta">7-12 мин · 731 м перепад</div></div>
+      <div><div class="lh-alt">3008 м</div><div class="lh-label">Финиш</div></div>
+    </div>
+    <div class="lift-params">
+      <div class="lp-item"><div class="lp-val">6</div><div class="lp-label">мест</div></div>
+      <div class="lp-item"><div class="lp-val">7-12 мин</div><div class="lp-label">в пути</div></div>
+      <div class="lp-item"><div class="lp-val">09:30</div><div class="lp-label">открытие</div></div>
+      <div class="lp-item"><div class="lp-val">16:00</div><div class="lp-label">закрытие</div></div>
+    </div>
+    <div class="lift-slopes-title">🎿 Трассы с этого подъёмника (6)</div>
+    <div class="slope-row" data-slope="slope-2"><div class="sr-num sn-red">2</div><div class="sr-info"><div class="sr-name">Домбайская поляна</div><div class="sr-len">3700 м · Самая длинная трасса курорта, спуск через всё плато</div></div></div>
+    <div class="slope-row" data-slope="slope-5"><div class="sr-num sn-red">5</div><div class="sr-info"><div class="sr-name">Домбай 2</div><div class="sr-len">2900 м · Основная трасса верхней зоны катания</div></div></div>
+    <div class="slope-row" data-slope="slope-3"><div class="sr-num sn-blue">3</div><div class="sr-info"><div class="sr-name">Сулахат</div><div class="sr-len">2300 м · Популярный маршрут средней сложности</div></div></div>
+    <div class="slope-row" data-slope="slope-4"><div class="sr-num sn-blue">4</div><div class="sr-info"><div class="sr-name">Старый Домбай</div><div class="sr-len">1600 м · Спуск в нижнюю часть курорта</div></div></div>
+    <div class="slope-row" data-slope="slope-6"><div class="sr-num sn-blue">6</div><div class="sr-info"><div class="sr-name">Аманауз</div><div class="sr-len">1100 м · Короткая трасса с видом на ущелье Аманауз</div></div></div>
+    <div class="slope-row" data-slope="slope-7"><div class="sr-num sn-green">7</div><div class="sr-info"><div class="sr-name">Солнечная</div><div class="sr-len">400 м · Учебный склон для начинающих и детей</div></div></div>
+  </div>
+
+  <!-- ДОМБАЙ-3 -->
+  <div class="lift-card" data-id="lift-3">
+    <div class="lift-header">
+      <div class="lift-num ln-3">3</div>
+      <div class="lift-info">
+        <div class="lift-name">Домбай-3 <span class="status-badge st-loading" id="badge-lift-3"><span class="st-dot"></span> Загрузка</span></div>
+        <div class="lift-type">Четырёхкресельная КД · Самая высокая точка курорта</div>
+      </div>
+    </div>
+    <div class="lift-heights">
+      <div><div class="lh-alt">3008 м</div><div class="lh-label">Старт</div></div>
+      <div class="lh-arrow"><div class="lh-line"></div><div class="lh-meta">15-19 мин · 138 м перепад</div></div>
+      <div><div class="lh-alt">3146 м</div><div class="lh-label">Финиш</div></div>
+    </div>
+    <div class="lift-params">
+      <div class="lp-item"><div class="lp-val">4</div><div class="lp-label">места</div></div>
+      <div class="lp-item"><div class="lp-val">15-19 мин</div><div class="lp-label">в пути</div></div>
+      <div class="lp-item"><div class="lp-val">10:00</div><div class="lp-label">открытие</div></div>
+      <div class="lp-item"><div class="lp-val">15:30</div><div class="lp-label">закрытие</div></div>
+    </div>
+    <div class="lift-slopes-title">🎿 Трассы с этого подъёмника (1)</div>
+    <div class="slope-row" data-slope="slope-1"><div class="sr-num sn-black">1</div><div class="sr-info"><div class="sr-name">Мусса — Ачитара</div><div class="sr-len">940 м · Спуск с вершины, панорама Главного Кавказского хребта</div></div></div>
+  </div>
+
+</div>
+
+<!-- РАСПИСАНИЕ -->
+<div class="sec-h">⏰ Время работы</div>
+<div class="schedule-block">
+  <div class="schedule-row"><span class="sr-label-t">Зимний сезон (дек – март)</span><span class="sr-val-t">08:30 – 16:30</span></div>
+  <div class="schedule-row"><span class="sr-label-t">Летний сезон (июн – сен)</span><span class="sr-val-t">09:00 – 17:00</span></div>
+  <div class="schedule-row"><span class="sr-label-t">Межсезонье (апр – май, окт – ноя)</span><span class="sr-val-t">09:00 – 16:00</span></div>
+</div>
+
+<!-- TIP BLOCK -->
+<div class="tip-block">
+  <div class="tip-title">Полезно знать</div>
+  <div class="tip-item"><div class="tip-dot"></div>Подъёмники связаны последовательно — сначала Домбай-1, затем Домбай-2, затем Домбай-3</div>
+  <div class="tip-item"><div class="tip-dot"></div>Основная зона катания — после Домбай-2, на высоте 2600–3000 м</div>
+  <div class="tip-item"><div class="tip-dot"></div>На вершине холоднее на 6–9°C, чем в посёлке — берите тёплую одежду</div>
+  <div class="tip-item"><div class="tip-dot"></div>Лучше подниматься в первой половине дня — после обеда появляется облачность</div>
+  <div class="tip-item"><div class="tip-dot"></div>При сильном ветре КД могут остановить — деньги за ски-пасс не возвращаются</div>
+</div>
+
+<div style="margin:10px 14px 0;padding:10px 2px;">
+  <div style="font-size:11px;color:#A0AEB8;line-height:1.55;">Информация носит справочный характер. Актуальное расписание и цены проверяйте на официальном сайте <a href="https://dombai-kd.ru" style="color:#A0AEB8;">dombai-kd.ru</a> или по горячей линии +7 (87879) 5-80-06.</div>
+</div>
+
+<div class="footer-pad"></div>
+
+<nav class="bottom-nav">
+  <div class="ni" onclick="goNav('home')"><span class="nico">🏠</span><span class="nlbl">Главная</span></div>
+  <div class="ni" onclick="goNav('hotels')"><span class="nico">🏨</span><span class="nlbl">Отели</span></div>
+  <div class="ni" onclick="goNav('routes')"><span class="nico">🥾</span><span class="nlbl">Маршруты</span></div>
+  <div class="ni active"><span class="nico">⛷️</span><span class="nlbl">Трассы</span></div>
+</nav>
+
+<script>
+try{
+  const tg = window.Telegram.WebApp;
+  tg.ready(); tg.expand(); tg.setHeaderColor('#071520');
+  tg.BackButton.show();
+  tg.BackButton.onClick(() => { window.location.href = 'index.html'; });
+}catch(e){}
+
+/* ── Google Sheets CSV → статусы ── */
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQrzQJELE_fVune45VufcTq138ceHZ4uC2PQHxTNqM0gaJDkNvQb5RAWqNB3ysR_iwQtk1Wg6DRgpsp/pub?gid=0&single=true&output=csv';
+
+function parseCSVRow(row) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < row.length; i++) {
+    const ch = row[i];
+    if (ch === '"') { inQuotes = !inQuotes; continue; }
+    if (ch === ',' && !inQuotes) { result.push(current.trim()); current = ''; continue; }
+    current += ch;
+  }
+  result.push(current.trim());
+  return result;
+}
+
+async function loadStatuses() {
+  try {
+    const res = await fetch(SHEET_URL);
+    if (!res.ok) throw new Error('fetch failed');
+    const text = await res.text();
+    const rows = text.trim().split('\n').map(r => parseCSVRow(r));
+
+    let updateTime = '';
+    const statuses = {};
+
+    rows.forEach((cols, i) => {
+      if (i === 0) return;
+      const id     = (cols[0] || '').trim();
+      const name   = (cols[1] || '').trim();
+      const type   = (cols[2] || '').trim();
+      const status = (cols[3] || '').trim().toLowerCase();
+      const updated= (cols[4] || '').trim();
+
+      if (type === 'meta') { updateTime = updated; return; }
+      statuses[id] = { name, type, status, updated };
+    });
+
+    // Плашка времени
+    if (updateTime) {
+      document.getElementById('update-time').textContent = updateTime;
+      document.getElementById('update-bar').style.display = 'flex';
+    }
+
+    // Бейджи подъёмников
+    ['lift-1','lift-2','lift-3'].forEach(id => {
+      const badge = document.getElementById('badge-' + id);
+      if (!badge || !statuses[id]) return;
+      const isOpen = statuses[id].status === 'open';
+      badge.className = 'status-badge ' + (isOpen ? 'st-open' : 'st-closed');
+      badge.innerHTML = '<span class="st-dot"></span> ' + (isOpen ? 'Работает' : 'Закрыт');
+    });
+
+    // Бейджи и прозрачность трасс
+    document.querySelectorAll('.slope-row[data-slope]').forEach(row => {
+      const slopeId = row.dataset.slope;
+      if (!statuses[slopeId]) return;
+      const isOpen = statuses[slopeId].status === 'open';
+
+      const nameEl = row.querySelector('.sr-name');
+      if (nameEl && !nameEl.querySelector('.status-badge')) {
+        const badge = document.createElement('span');
+        badge.className = 'status-badge ' + (isOpen ? 'st-open' : 'st-closed');
+        badge.innerHTML = '<span class="st-dot"></span> ' + (isOpen ? 'Открыта' : 'Закрыта');
+        badge.style.marginLeft = '6px';
+        badge.style.verticalAlign = 'middle';
+        nameEl.appendChild(badge);
+      }
+      if (!isOpen) row.style.opacity = '0.45';
+    });
+
+  } catch(e) {
+    console.log('Статусы недоступны:', e);
+    document.querySelectorAll('.st-loading').forEach(b => b.style.display = 'none');
+  }
+}
+
+loadStatuses();
+
+function openLink(url) {
+  try { window.Telegram.WebApp.openLink(url); }
+  catch(e) { window.open(url, '_blank'); }
+}
+
+function goNav(page) {
+  const map = {home:'index.html', hotels:'hotels.html', routes:'routes.html'};
+  window.location.href = map[page] || 'index.html';
+}
+</script>
+</body>
+</html>
